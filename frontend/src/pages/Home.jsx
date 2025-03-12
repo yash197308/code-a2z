@@ -5,6 +5,9 @@ import Loader from "../components/Loader";
 import axios from "axios";
 import ProjectPostCard from "../components/ProjectPostCard";
 import MinimalProjectPost from "../components/NoBannerProjectPost";
+import NoDataMessage from "../components/NoData";
+import { filterPaginationData } from "../common/filter-pagination-data";
+import LoadMoreDataBtn from "../components/LoadMoreData";
 
 const Home = () => {
 
@@ -14,10 +17,36 @@ const Home = () => {
 
     let categories = ["web", "data science", "game development", "automation", "cloud computing", "blockchain"]
 
-    const fetchLatestProjects = () => {
-        axios.get(import.meta.env.VITE_SERVER_DOMAIN + "/api/project/get")
-            .then(({ data }) => {
-                setProjects(data.projects);
+    const fetchLatestProjects = ({ page = 1 }) => {
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/project/get", { page })
+            .then(async ({ data }) => {
+
+                let formattedData = await filterPaginationData({
+                    state: projects,
+                    data: data.projects,
+                    page,
+                    countRoute: "/api/project/all-latest-count"
+                })
+                setProjects(formattedData);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    const fetchProjectsByCategory = ({ page = 1 }) => {
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/project/search", { tag: pageState, page })
+            .then(async ({ data }) => {
+
+                let formattedData = await filterPaginationData({
+                    state: projects,
+                    data: data.projects,
+                    page,
+                    countRoute: "/api/project/search-count",
+                    data_to_send: { tag: pageState }
+                })
+
+                setProjects(formattedData);
             })
             .catch(err => {
                 console.log(err);
@@ -35,7 +64,6 @@ const Home = () => {
     }
 
     const loadProjectsByCategory = (e) => {
-
         let category = e.target.innerText.toLowerCase();
         setProjects(null);
 
@@ -44,25 +72,15 @@ const Home = () => {
             return;
         }
         setPageState(category);
-
-        axios.get(import.meta.env.VITE_SERVER_DOMAIN + "/api/project/get", {
-            params: {
-                category
-            }
-        })
-            .then(({ data }) => {
-                setProjects(data.projects);
-            })
-            .catch(err => {
-                console.log(err);
-            })
     }
 
     useEffect(() => {
         activeTabRef.current.click();
 
         if (pageState === "home") {
-            fetchLatestProjects();
+            fetchLatestProjects({ page: 1 });
+        } else {
+            fetchProjectsByCategory({ page: 1 });
         }
         if (!trendingProjects) {
             fetchTrendingProjects();
@@ -77,25 +95,36 @@ const Home = () => {
                     <InPageNavigation routes={[pageState, "trending projects"]} defaultHidden={["trending projects"]}>
                         <>
                             {
-                                projects === null ? <Loader /> :
-                                    projects.map((project, i) => {
+                                projects === null ? (
+                                    <Loader />
+                                ) : (
+                                    projects && projects.results.length ?
+                                        projects.results.map((project, i) => {
+                                            return (
+                                                <AnimationWrapper key={i} transition={{ duration: 1, delay: i * .1 }}>
+                                                    <ProjectPostCard content={project} author={project.author.personal_info} />
+                                                </AnimationWrapper>
+                                            )
+                                        })
+                                        : <NoDataMessage message="No projects published" />
+                                )
+                            }
+                            <LoadMoreDataBtn state={projects} fetchDataFun={(pageState === "home" ? fetchLatestProjects : fetchProjectsByCategory)} />
+                        </>
+                        {
+                            trendingProjects === null ? (
+                                <Loader />
+                            ) : (
+                                trendingProjects.length ?
+                                    trendingProjects.map((project, i) => {
                                         return (
                                             <AnimationWrapper key={i} transition={{ duration: 1, delay: i * .1 }}>
-                                                <ProjectPostCard content={project} author={project.author.personal_info} />
+                                                <MinimalProjectPost project={project} index={i} />
                                             </AnimationWrapper>
                                         )
                                     })
-                            }
-                        </>
-                        {
-                            trendingProjects === null ? <Loader /> :
-                                trendingProjects.map((project, i) => {
-                                    return (
-                                        <AnimationWrapper key={i} transition={{ duration: 1, delay: i * .1 }}>
-                                            <MinimalProjectPost project={project} index={i} />
-                                        </AnimationWrapper>
-                                    )
-                                })
+                                    : <NoDataMessage message="No trending projects" />
+                            )
                         }
                     </InPageNavigation>
                 </div>
@@ -123,14 +152,19 @@ const Home = () => {
                             <h1 className="font-medium text-xl mb-8">Trending <i className="fi fi-rr-arrow-trend-up"></i></h1>
 
                             {
-                                trendingProjects === null ? <Loader /> :
-                                    trendingProjects.map((project, i) => {
-                                        return (
-                                            <AnimationWrapper key={i} transition={{ duration: 1, delay: i * .1 }}>
-                                                <MinimalProjectPost project={project} index={i} />
-                                            </AnimationWrapper>
-                                        )
-                                    })
+                                trendingProjects === null ? (
+                                    <Loader />
+                                ) : (
+                                    trendingProjects.length ?
+                                        trendingProjects.map((project, i) => {
+                                            return (
+                                                <AnimationWrapper key={i} transition={{ duration: 1, delay: i * .1 }}>
+                                                    <MinimalProjectPost project={project} index={i} />
+                                                </AnimationWrapper>
+                                            )
+                                        })
+                                        : <NoDataMessage message="No trending projects" />
+                                )
                             }
                         </div>
                     </div>
