@@ -7,6 +7,7 @@ import { getDay } from "../common/date";
 import ProjectInteraction from "../components/ProjectInteraction";
 import ProjectPostCard from "../components/ProjectPostCard";
 import ProjectContent from "../components/ProjectContent";
+import CommentsContainer, { fetchComments } from "../components/Comments";
 
 export const projectStructure = {
     title: '',
@@ -28,12 +29,19 @@ const ProjectPage = () => {
     const [project, setProject] = useState(projectStructure);
     const [similarProjects, setSimilarProjects] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [islikedByUser, setLikedByUser] = useState(false);
+    const [commentsWrapper, setCommentsWrapper] = useState(false);
+    const [totalParentCommentsLoaded, setTotalParentCommentsLoaded] = useState(0);
 
     let { title, content, banner, author: { personal_info: { fullname, username: author_username, profile_img } }, publishedAt, projectUrl, repository } = project;
 
     const fetchProject = () => {
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/project/get", { project_id })
-            .then(({ data: { project } }) => {
+            .then(async ({ data: { project } }) => {
+
+                project.comments = await fetchComments({ project_id: project._id, setParentCommentCountFun: setTotalParentCommentsLoaded });
+
+                setProject(project);
 
                 axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/api/project/search", { tag: project.tags[0], limit: 6, elminate_project: project_id })
                     .then(({ data }) => {
@@ -61,13 +69,19 @@ const ProjectPage = () => {
         setProject(projectStructure);
         setSimilarProjects(null);
         setLoading(true);
+        setLikedByUser(false);
+        setCommentsWrapper(false);
+        setTotalParentCommentsLoaded(0);
     }
 
     return (
         <AnimationWrapper>
             {
                 loading ? <Loader /> :
-                    <ProjectContext.Provider value={{ project, setProject }}>
+                    <ProjectContext.Provider value={{ project, setProject, islikedByUser, setLikedByUser, commentsWrapper, setCommentsWrapper, totalParentCommentsLoaded, setTotalParentCommentsLoaded }}>
+
+                        <CommentsContainer />
+
                         <div className="max-w-[900px] center py-10 max-lg:px-[5vw]">
                             <div className="my-8 flex max-sm:flex-col justify-between">
                                 <h2>{title}</h2>
