@@ -51,7 +51,7 @@ export const likeStatus = async (req, res) => {
 export const addComment = async (req, res) => {
     let user_id = req.user;
 
-    let { _id, comment, project_author, replying_to } = req.body;
+    let { _id, comment, project_author, replying_to, notification_id } = req.body;
 
     if (!comment.length) {
         return res.status(403).json({ error: "Write something to leave a comment" });
@@ -91,6 +91,16 @@ export const addComment = async (req, res) => {
                 .then(replyingToCommentDoc => {
                     notificationObj.notification_for = replyingToCommentDoc.commented_by;
                 });
+
+            if (notification_id) {
+                Notification.findOneAndUpdate({ _id: notification_id }, { reply: commentFile._id })
+                    .then(() => {
+                        console.log('Notification updated successfully')
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            }
         }
 
         notificationObj.save().then(notification => {
@@ -164,7 +174,7 @@ const deleteComments = (_id) => {
                 .then(notification => console.log('Notification deleted successfully'))
                 .catch(err => console.log(err));
 
-            Notification.findOneAndDelete({ reply: _id })
+            Notification.findOneAndUpdate({ reply: _id }, { $unset: { reply: 1 } })
                 .then(notification => console.log('Notification deleted successfully'))
                 .catch(err => console.log(err));
 
@@ -195,5 +205,90 @@ export const deleteComment = async (req, res) => {
             } else {
                 return res.status(403).json({ error: "You are not authorized to delete this comment" });
             }
+        })
+}
+
+export const newNotification = async (req, res) => {
+
+    let user_id = req.user;
+
+    Notification.exists({ notification_for: user_id, seen: false, user: { $ne: user_id } })
+        .then(result => {
+            if (result) {
+                return res.status(200).json({ new_notification_available: true })
+            } else {
+                return res.status(200).json({ new_notification_available: false })
+            }
+        })
+        .catch(err => {
+            return res.status(500).json({ error: err.message });
+        })
+}
+
+export const getNotifications = async (req, res) => {
+    let user_id = req.user;
+
+    let { page, filter, deletedDocCount } = req.body;
+
+    let maxLimit = 10;
+
+    let findQuery = { notification_for: user_id, user: { $ne: user_id } };
+
+    let skipDocs = (page - 1) * maxLimit;
+
+    if (filter !== 'all') {
+        findQuery.type = filter;
+    }
+
+    if (deletedDocCount) {
+        skipDocs -= deletedDocCount;
+    }
+
+    Notification.find(findQuery)
+        .skip(skipDocs)
+        .limit(maxLimit)
+        .populate("project", "title project_id")
+        .populate("user", "personal_info.username personal_info.fullname personal_info.profile_img")
+        .populate("comment", "comment")
+        .populate("replied_on_comment", "comment")
+        .populate("reply", "comment")
+        .sort({ createdAt: -1 })
+        .select("createdAt type seen reply")
+        .then(notifications => {
+
+            Notification.updateMany(findQuery, { seen: true })
+                .skip(skipDocs)
+                .limit(maxLimit)
+                .then(() => {
+                    console.log('Notifications seen')
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+
+            return res.status(200).json({ notifications });
+        })
+        .catch(err => {
+            return res.status(500).json({ error: err.message });
+        })
+}
+
+export const allNotificationsCount = async (req, res) => {
+    let user_id = req.user;
+
+    let { filter } = req.body;
+
+    let findQuery = { notification_for: user_id, user: { $ne: user_id } };
+
+    if (filter !== 'all') {
+        findQuery.type = filter;
+    }
+
+    Notification.countDocuments(findQuery)
+        .then(count => {
+            return res.status(200).json({ totalDocs: count });
+        })
+        .catch(err => {
+            return res.status(500).json({ error: err.message });
         })
 }
