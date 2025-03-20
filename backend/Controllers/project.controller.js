@@ -39,7 +39,7 @@ export const createProject = async (req, res) => {
     let project_id = id || title.replace(/[^a-zA-Z0-9]/g, ' ').replace(/\s+/g, '-').trim() + nanoid();
 
     if (id) {
-        Project.findOneAndUpdate({ project_id }, { title, des, banner, content, tags, draft: draft ? draft : false })
+        Project.findOneAndUpdate({ project_id }, { title, des, banner, projectUrl, repository, content, tags, draft: draft ? draft : false })
             .then(project => {
                 return res.status(200).json({ id: project_id });
             })
@@ -199,6 +199,75 @@ export const getProject = async (req, res) => {
             }
 
             return res.status(200).json({ project });
+        })
+        .catch(err => {
+            return res.status(500).json({ error: err.message });
+        })
+}
+
+export const userWrittenProjects = async (req, res) => {
+
+    let user_id = req.user;
+
+    let { page, draft, query, deletedDocCount } = req.body;
+
+    let maxLimit = 5;
+    let skipDocs = (page - 1) * maxLimit;
+
+    if (deletedDocCount) {
+        skipDocs -= deletedDocCount;
+    }
+
+    Project.find({ author: user_id, draft, title: new RegExp(query, 'i') })
+        .skip(skipDocs)
+        .limit(maxLimit)
+        .sort({ publishedAt: -1 })
+        .select("title banner publishedAt project_id activity des draft -_id")
+        .then(projects => {
+            return res.status(200).json({ projects });
+        })
+        .catch(err => {
+            return res.status(500).json({ error: err.message });
+        })
+}
+
+export const userWrittenProjectsCount = async (req, res) => {
+
+    let user_id = req.user;
+
+    let { draft, query } = req.body;
+
+    Project.countDocuments({ author: user_id, draft, title: new RegExp(query, 'i') })
+        .then(count => {
+            return res.status(200).json({ totalDocs: count });
+        })
+        .catch(err => {
+            return res.status(500).json({ error: err.message });
+        })
+}
+
+export const deleteProject = async (req, res) => {
+
+    let user_id = req.user;
+
+    let { project_id } = req.body;
+
+    Project.findOneAndDelete({ project_id })
+        .then(project => {
+
+            Notification.deleteMany({ project: project._id })
+                .then(data => console.log("Nofiication deleted"));
+
+            Comment.deleteMany({ project: project._id })
+                .then(data => console.log("Comments deleted"));
+
+            User.findOneAndUpdate({ _id: user_id }, { $pull: { project: project._id }, $inc: { "account_info.total_posts": -1 } })
+                .then(user => {
+                    return res.status(200).json({ message: "Project deleted successfully" });
+                })
+                .catch(err => {
+                    return res.status(500).json({ error: err.message });
+                })
         })
         .catch(err => {
             return res.status(500).json({ error: err.message });
