@@ -1,3 +1,6 @@
+[submodule "projects/web-development/frontend/product-landing-page"]
+	path = projects/web-development/frontend/product-landing-page
+	url = https://github.com/code-a2z/product-landing-page.git
 [submodule "projects/data-science/nlp-apps/resume-analyzer"]
 	path = projects/data-science/nlp-apps/resume-analyzer
 	url = https://github.com/Code-A2Z/resume-analyzer.git
