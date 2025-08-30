@@ -5,6 +5,7 @@ import { userAtom } from "./shared/states/user";
 import Navbar from "./shared/components/molecules/navbar";
 import Notifications from "./shared/components/molecules/notifications";
 import Home from "./modules/home";
+import UserAuthForm from "./modules/user-auth-form";
 
 function App() {
   const [userAuth, setUserAuth] = useAtom(userAtom);
@@ -26,6 +27,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Navbar />}>
           <Route index element={<Home />} />
+          <Route path="login" element={<UserAuthForm type="login" />} />
+          <Route path="signup" element={<UserAuthForm type="signup" />} />
         </Route>
       </Routes>
 
