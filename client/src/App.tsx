@@ -4,6 +4,7 @@ import { useAtom } from "jotai";
 import { userAtom } from "./shared/states/user";
 import Navbar from "./shared/components/molecules/navbar";
 import Notifications from "./shared/components/molecules/notifications";
+import Home from "./modules/home";
 
 function App() {
   const [userAuth, setUserAuth] = useAtom(userAtom);
@@ -24,6 +25,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Navbar />}>
+          <Route index element={<Home />} />
         </Route>
       </Routes>
 
