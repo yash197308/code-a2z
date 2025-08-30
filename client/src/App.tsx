@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { useAtom } from "jotai";
 import { userAtom } from "./shared/states/user";
+import Navbar from "./shared/components/molecules/navbar";
 import Notifications from "./shared/components/molecules/notifications";
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<Navbar />}>
+        </Route>
       </Routes>
 
       <Notifications />
