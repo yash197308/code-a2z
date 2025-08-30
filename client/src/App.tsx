@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useAtom } from "jotai";
-import { userAtom } from "./shared/states/user";
+import { UserAtom } from "./shared/states/user";
 import Navbar from "./shared/components/molecules/navbar";
 import Notifications from "./shared/components/molecules/notifications";
 import Home from "./modules/home";
@@ -9,7 +9,7 @@ import UserAuthForm from "./modules/user-auth-form";
 import PageNotFound from "./modules/404";
 
 function App() {
-  const [userAuth, setUserAuth] = useAtom(userAtom);
+  const [userAuth, setUserAuth] = useAtom(UserAtom);
 
   useEffect(() => {
     // Check if user is authenticated

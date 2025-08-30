@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { getDay } from "../../../shared/utils/date";
-import { Project } from "../typings";
+import { Project, TrendingProject } from "../../../shared/typings";
 
 interface MinimalProjectPostProps {
-  project: Project;
+  project: Project | TrendingProject;
   index: number;
 }
 

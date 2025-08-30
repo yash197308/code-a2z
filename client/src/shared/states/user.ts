@@ -1,12 +1,4 @@
 import { atom } from "jotai";
+import { User } from "../typings";
 
-export interface User {
-  access_token: string | null;
-  username?: string;
-  name?: string;
-  email?: string;
-  profile_img?: string;
-  new_notification_available?: boolean;
-}
-
-export const userAtom = atom<User | null>(null);
+export const UserAtom = atom<User | null>(null);

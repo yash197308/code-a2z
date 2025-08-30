@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 import AnimationWrapper from "../../../atoms/page-animation";
 import { removeFromSession } from "../../../../utils/session";
 import { useAtom } from "jotai";
-import { userAtom } from "../../../../states/user";
+import { UserAtom } from "../../../../states/user";
 
 const UserNavigationPanel = () => {
-  const [user, setUser] = useAtom(userAtom);
+  const [user, setUser] = useAtom(UserAtom);
   const signOutUser = () => {
     removeFromSession("user");
     setUser({ access_token: null });

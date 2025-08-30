@@ -9,7 +9,7 @@ const LoadMoreDataBtn = ({
   fetchDataFun,
   additionalParam,
 }: LoadMoreDataBtnProps) => {
-  if (state && state.totalDocs > state.results.length) {
+  if (state && state.results && state.totalDocs > state.results.length) {
     return (
       <button
         onClick={() => fetchDataFun({ ...additionalParam, page: state.page + 1 })}

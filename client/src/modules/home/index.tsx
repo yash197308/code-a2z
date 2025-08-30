@@ -9,48 +9,57 @@ import InPageNavigation, { activeTabRef } from "../../shared/components/molecule
 import LatestProjectsSkeleton from "./components/latestProjectsSkeleton";
 import TrendingProjectsSkeleton from "./components/trendingProjectsSkeleton";
 import { getAllLatestProjects, getTrendingProjects, searchProjectByCategory } from "./requests";
-import { Project } from "./typings";
+import { useAtom } from "jotai";
+import { ProjectAtom, TrendingProjectAtom } from "../../shared/states/project";
+import { useNotifications } from "../../shared/hooks/use-notification";
 
-interface AllProjectsData {
-  results: Project[];
-  total: number;
-}
+const categories = [
+  "web",
+  "data science",
+  "game development",
+  "automation",
+  "cloud computing",
+  "blockchain",
+];
 
 const Home = () => {
-  const [projects, setProjects] = useState<AllProjectsData | null>(null);
-  const [trendingProjects, setTrendingProjects] = useState<Project[]>([]);
-  const [pageState, setPageState] = useState("home");
+  const [projects, setProjects] = useAtom(ProjectAtom);
+  const [trendingProjects, setTrendingProjects] = useAtom(TrendingProjectAtom);
+  const { addNotification } = useNotifications();
 
-  const categories = [
-    "web",
-    "data science",
-    "game development",
-    "automation",
-    "cloud computing",
-    "blockchain",
-  ];
+  const [pageState, setPageState] = useState("home");
 
   const fetchLatestProjects = async ({ page = 1 }) => {
     const response = await getAllLatestProjects(page);
-    if (response.status === 200) {
-      const data = await response.json();
+    if (response.projects.length > 0) {
       const formattedData = await filterPaginationData({
         state: projects,
-        data: data.projects,
+        data: response.projects,
         page,
         countRoute: "/api/project/all-latest-count",
       });
-      setProjects(formattedData);
+      if (formattedData.results) {
+        setProjects(formattedData);
+      } else {
+        addNotification({
+          message: "No Project Found!",
+          type: "error"
+        });
+      }
+    } else {
+      addNotification({
+        message: "No Projects Found!",
+        type: "error"
+      });
     }
   };
 
   const fetchProjectsByCategory = async ({ page = 1 }) => {
     const response = await searchProjectByCategory(pageState, page);
-    if (response.status === 200) {
-      const data = await response.json();
+    if (response.projects.length > 0) {
       const formattedData = await filterPaginationData({
         state: projects,
-        data: data.projects,
+        data: response.projects,
         page,
         countRoute: "/api/project/search-count",
         data_to_send: { tag: pageState },
@@ -61,9 +70,8 @@ const Home = () => {
 
   const fetchTrendingProjects = async () => {
     const response = await getTrendingProjects();
-    if (response.status === 200) {
-      const data = await response.json();
-      setTrendingProjects(data.projects);
+    if (response.projects.length > 0) {
+      setTrendingProjects(response.projects);
     }
   };
 
@@ -103,17 +111,17 @@ const Home = () => {
             defaultHidden={["trending projects"]}
           >
             <>
-              {projects?.results.length === 0 ? (
+              {projects?.results && projects.results.length === 0 ? (
                 <LatestProjectsSkeleton count={3} />
-              ) : projects?.results.length ? (
-                projects?.results.map((project: Project, i: number) => {
+              ) : projects?.results && projects.results.length ? (
+                projects.results.map((project, i) => {
                   return (
                     <AnimationWrapper
                       key={i}
                       transition={{ duration: 1, delay: i * 0.1 }}
                     >
                       <ProjectPostCard
-                        content={project}
+                        project={project}
                         author={project.author.personal_info}
                       />
                     </AnimationWrapper>
@@ -131,10 +139,10 @@ const Home = () => {
                 }
               />
             </>
-            {trendingProjects.length === 0 ? (
+            {trendingProjects && trendingProjects.length === 0 ? (
               <TrendingProjectsSkeleton count={3} />
-            ) : trendingProjects.length ? (
-              trendingProjects.map((project: Project, i: number) => {
+            ) : trendingProjects && trendingProjects.length ? (
+              trendingProjects.map((project, i) => {
                 return (
                   <AnimationWrapper
                     key={i}

@@ -1,18 +1,25 @@
-export interface Project {
-  title: string;
-  project_id: string;
-  author: {
-    personal_info: {
-      fullname: string;
-      username: string;
-      profile_img: string;
-    };
-  };
-  activity: {
-    total_likes: number;
-  };
-  tags: string[];
-  des: string;
-  banner: string;
-  publishedAt: string;
+import {
+  Project,
+  TrendingProject,
+} from "../../../shared/typings";
+
+export interface GetAllProjectsPayload {
+  page: number;
+}
+
+export interface GetAllProjectsResponse {
+  projects: Project[];
+};
+
+export interface SearchProjectsByCategoryPayload {
+  tag: string;
+  page: number;
+}
+
+export interface SearchProjectsByCategoryResponse {
+  projects: Project[];
+}
+
+export interface GetTrendingProjectsResponse {
+  projects: TrendingProject[];
 }

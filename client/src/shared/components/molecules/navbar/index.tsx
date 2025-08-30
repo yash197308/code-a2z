@@ -4,11 +4,11 @@ import { useAtom } from "jotai";
 import UserNavigationPanel from "./components/userNavigationPanel";
 import SubscribeModal from "./components/subscriberModal";
 import ThemeToggle from "../theme-toggler";
-import { userAtom } from "../../../states/user";
+import { UserAtom } from "../../../states/user";
 import { checkNewNotifications } from "./requests";
 
 const Navbar = () => {
-  const [user, setUser] = useAtom(userAtom);
+  const [user, setUser] = useAtom(UserAtom);
   const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
   const [userNavPanel, setUserNavPanel] = useState(false);
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);

@@ -1,7 +1,14 @@
-import { post } from "../../../infra/rest"
+import { get, post } from "../../../infra/rest";
+import {
+  GetAllProjectsPayload,
+  GetAllProjectsResponse,
+  GetTrendingProjectsResponse,
+  SearchProjectsByCategoryPayload,
+  SearchProjectsByCategoryResponse,
+} from "../typings";
 
 export const getAllLatestProjects = async (page: number) => {
-  return post(
+  return post<GetAllProjectsResponse, GetAllProjectsPayload>(
     `/api/project/getall`,
     false,
     {
@@ -11,7 +18,7 @@ export const getAllLatestProjects = async (page: number) => {
 };
 
 export const searchProjectByCategory = async (tag: string, page: number) => {
-  return post(
+  return post<SearchProjectsByCategoryResponse, SearchProjectsByCategoryPayload>(
     `/api/project/search`,
     false,
     {
@@ -22,7 +29,7 @@ export const searchProjectByCategory = async (tag: string, page: number) => {
 };
 
 export const getTrendingProjects = async () => {
-  return post(
+  return get<GetTrendingProjectsResponse>(
     `/api/project/trending`,
     false,
   );

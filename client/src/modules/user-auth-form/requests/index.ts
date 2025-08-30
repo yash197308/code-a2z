@@ -1,10 +1,14 @@
-import { post } from "../../../infra/rest"
+import { post } from "../../../infra/rest";
+import {
+  AuthorizeUserPayload,
+  AuthorizeUserResponse,
+} from "../typings";
 
 export const authorizeUser = async (
   serverRoute: string,
-  formData: { email: string, password: string, fullname?: string }
+  formData: AuthorizeUserPayload,
 ) => {
-  return post(
+  return post<AuthorizeUserResponse, AuthorizeUserPayload>(
     serverRoute,
     false,
     formData,

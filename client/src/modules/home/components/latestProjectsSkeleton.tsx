@@ -1,9 +1,9 @@
 const LatestProjectsSkeleton = ({ count } : { count: number }) => {
   return (
     <div className="flex flex-col space-y-2">
-      {[...Array(count)].map((temp) => (
+      {[...Array(count)].map((_, idx) => (
         <div
-          key={temp}
+          key={idx}
           className="w-full p-4 bg-[#f5f5f5] dark:bg-[#151515] rounded-md animate-pulse space-y-4"
         >
           <div className="flex items-center space-x-4">

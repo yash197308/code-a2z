@@ -1,34 +1,33 @@
 import { Link, Navigate } from "react-router-dom";
 import { useAtom } from "jotai";
-
 import InputBox from "../../shared/components/atoms/input-box";
 import AnimationWrapper from "../../shared/components/atoms/page-animation";
-import { userAtom } from "../../shared/states/user";
+import { UserAtom } from "../../shared/states/user";
 import { emailRegex, passwordRegex } from "../../shared/utils/regex";
 import { subscribeUser } from "../../shared/components/molecules/navbar/requests";
 import { authorizeUser } from "./requests";
 import { useNotifications } from "../../shared/hooks/use-notification";
 import React from "react";
-
-interface FormDataPayload {
-  email: string;
-  password: string;
-  fullname?: string;
-}
+import { AuthorizeUserPayload } from "./typings";
 
 const UserAuthForm = ({ type }: {type: string}) => {
-  const [userAuth, setUserAuth] = useAtom(userAtom);
+  const [userAuth, setUserAuth] = useAtom(UserAtom);
   const {addNotification} = useNotifications();
 
-  const userAuthThroughServer = async (serverRoute: string, formData: FormDataPayload) => {
+  const userAuthThroughServer = async (serverRoute: string, formData: AuthorizeUserPayload) => {
     if (serverRoute === "/api/auth/signup") {
       const { email } = formData;
       await subscribeUser(email);
     }
     const response = await authorizeUser(serverRoute, formData);
-    if (response.status === 200) {
-      const data = response.json();
-      setUserAuth(data);
+    if (response.access_token) {
+      setUserAuth({
+        access_token: response.access_token,
+        profile_img: response.profile_img,
+        username: response.username,
+        fullname: response.fullname,
+        role: response.role,
+      });
       addNotification({
         message: "Logged in successfully!",
         type: "success",
@@ -46,7 +45,7 @@ const UserAuthForm = ({ type }: {type: string}) => {
     if (!formRef.current) return;
 
     let form = new FormData(formRef.current);
-    let formData: FormDataPayload = {
+    let formData: AuthorizeUserPayload = {
       email: "",
       password: "",
       fullname: "",
@@ -54,7 +53,7 @@ const UserAuthForm = ({ type }: {type: string}) => {
 
     for (let [key, value] of form.entries()) {
       if (key === "email" || key === "password" || key === "fullname") {
-        formData[key as keyof FormDataPayload] = value as string;
+        formData[key as keyof AuthorizeUserPayload] = value as string;
       }
     }
 

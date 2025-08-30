@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { getDay } from "../../../utils/date";
-import { Project } from "../../../../modules/home/typings";
+import { Project } from "../../../typings";
 
 interface ProjectCardProps {
-  content: Project;
+  project: Project;
   author: {
     fullname: string;
     profile_img: string;
@@ -12,10 +12,10 @@ interface ProjectCardProps {
 }
 
 const ProjectPostCard = ({
-  content,
+  project,
   author,
 }: ProjectCardProps) => {
-  const { publishedAt, tags, title, des, banner, activity: { total_likes }, project_id: id } = content;
+  const { publishedAt, tags, title, des, banner, activity: { total_likes }, project_id: id } = project;
   const { fullname, profile_img, username } = author;
 
   return (
