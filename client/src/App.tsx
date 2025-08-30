@@ -6,6 +6,7 @@ import Navbar from "./shared/components/molecules/navbar";
 import Notifications from "./shared/components/molecules/notifications";
 import Home from "./modules/home";
 import UserAuthForm from "./modules/user-auth-form";
+import PageNotFound from "./modules/404";
 
 function App() {
   const [userAuth, setUserAuth] = useAtom(userAtom);
@@ -29,6 +30,8 @@ function App() {
           <Route index element={<Home />} />
           <Route path="login" element={<UserAuthForm type="login" />} />
           <Route path="signup" element={<UserAuthForm type="signup" />} />
+
+          <Route path="*" element={<PageNotFound />} />
         </Route>
       </Routes>
 
