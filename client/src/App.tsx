@@ -8,6 +8,7 @@ import Home from "./modules/home";
 import UserAuthForm from "./modules/user-auth-form";
 import PageNotFound from "./modules/404";
 import Search from "./modules/search";
+import Profile from "./modules/profile";
 
 function App() {
   const [userAuth, setUserAuth] = useAtom(UserAtom);
@@ -32,6 +33,7 @@ function App() {
           <Route path="login" element={<UserAuthForm type="login" />} />
           <Route path="signup" element={<UserAuthForm type="signup" />} />
           <Route path="search/:query" element={<Search />} />
+          <Route path="user/:id" element={<Profile />} />
 
           <Route path="*" element={<PageNotFound />} />
         </Route>
