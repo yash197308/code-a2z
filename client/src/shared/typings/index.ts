@@ -22,9 +22,15 @@ export interface Project {
   des: string;
   projectUrl?: string;
   repository?: string;
-  content?: string[];
+  content?: Array<{
+    blocks: Array<{
+      type: string;
+      data: any;
+    }>;
+  }>;
   tags: string[];
   author: {
+    _id?: string;
     personal_info: {
       fullname: string;
       username: string;
@@ -32,7 +38,9 @@ export interface Project {
     };
   };
   publishedAt: string;
-  comments?: Comment[];
+  comments?: {
+    results: Comment[];
+  };
   _id?: string;
 };
 
@@ -52,6 +60,15 @@ export interface TrendingProject {
 export interface AllProjectsData {
   results: Project[];
 };
+
+export interface Comment {
+  _id: string;
+  user_id: string;
+  comment: string;
+  commentedAt: string;
+  children: string[];
+  childrenLevel?: number;
+}
 
 export interface Profile {
   personal_info: {
