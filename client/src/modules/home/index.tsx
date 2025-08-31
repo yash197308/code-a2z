@@ -10,7 +10,7 @@ import LatestProjectsSkeleton from "./components/latestProjectsSkeleton";
 import TrendingProjectsSkeleton from "./components/trendingProjectsSkeleton";
 import { getAllLatestProjects, getTrendingProjects, searchProjectByCategory } from "./requests";
 import { useAtom } from "jotai";
-import { ProjectAtom, TrendingProjectAtom } from "../../shared/states/project";
+import { AllProjectsAtom, TrendingProjectAtom } from "../../shared/states/project";
 import { useNotifications } from "../../shared/hooks/use-notification";
 
 const categories = [
@@ -23,7 +23,7 @@ const categories = [
 ];
 
 const Home = () => {
-  const [projects, setProjects] = useAtom(ProjectAtom);
+  const [projects, setProjects] = useAtom(AllProjectsAtom);
   const [trendingProjects, setTrendingProjects] = useAtom(TrendingProjectAtom);
   const { addNotification } = useNotifications();
 

@@ -12,7 +12,7 @@ import PageNotFound from '../404';
 import { useAtom, useAtomValue } from 'jotai';
 import { ProfileAtom } from '../../shared/states/profile';
 import { UserAtom } from '../../shared/states/user';
-import { ProjectAtom } from '../../shared/states/project';
+import { AllProjectsAtom } from '../../shared/states/project';
 import { searchProjectByCategory } from '../home/requests';
 import { getUserProfile } from './requests';
 
@@ -20,7 +20,7 @@ const Profile = () => {
   const { id: profileId } = useParams();
   const user = useAtomValue(UserAtom);
   const [profile, setProfile] = useAtom(ProfileAtom);
-  const [projects, setProjects] = useAtom(ProjectAtom);
+  const [projects, setProjects] = useAtom(AllProjectsAtom);
 
   const [loading, setLoading] = useState(true);
   const [profileLoaded, setProfileLoaded] = useState("");

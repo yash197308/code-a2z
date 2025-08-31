@@ -20,6 +20,9 @@ export interface Project {
   title: string;
   banner: string;
   des: string;
+  projectUrl?: string;
+  repository?: string;
+  content?: string[];
   tags: string[];
   author: {
     personal_info: {
@@ -29,6 +32,8 @@ export interface Project {
     };
   };
   publishedAt: string;
+  comments?: Comment[];
+  _id?: string;
 };
 
 export interface TrendingProject {

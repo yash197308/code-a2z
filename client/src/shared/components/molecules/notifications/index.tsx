@@ -5,7 +5,7 @@ import { notificationsAtom } from "../../../states/notification";
 import { NotificationType } from "../../../typings/notification";
 import { Alert, Slide } from "@mui/material";
 
-function Notifications() {
+function CANotifications() {
   const [notifications] = useAtom(notificationsAtom);
 
   return (
@@ -38,4 +38,4 @@ function Notifications() {
   );
 }
 
-export default Notifications;
+export default CANotifications;

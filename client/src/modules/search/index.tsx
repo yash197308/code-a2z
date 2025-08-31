@@ -9,7 +9,7 @@ import LoadMoreDataBtn from "../../shared/components/molecules/load-more-data";
 import { filterPaginationData } from "../../shared/requests/filter-pagination-data";
 import UserCard from "../../shared/components/molecules/user-card";
 import { useAtom } from "jotai";
-import { ProjectAtom } from "../../shared/states/project";
+import { AllProjectsAtom } from "../../shared/states/project";
 import { searchProjectByCategory } from "../home/requests";
 import { searchUserByName } from "./requests";
 import { UserProfile } from "./typings";
@@ -17,7 +17,7 @@ import { UserProfile } from "./typings";
 const Search = () => {
   const { query } = useParams();
 
-  const [projects, setProjects] = useAtom(ProjectAtom);
+  const [projects, setProjects] = useAtom(AllProjectsAtom);
   const [users, setUsers] = useState<UserProfile[] | null>(null);
 
   const searchProjects = async ({ page = 1, create_new_arr = false }) => {
