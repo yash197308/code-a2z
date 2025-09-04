@@ -10,6 +10,7 @@ import PageNotFound from "./modules/404";
 import Search from "./modules/search";
 import Profile from "./modules/profile";
 import Project from "./modules/project";
+import Editor from "./modules/editor";
 
 function App() {
   const [userAuth, setUserAuth] = useAtom(UserAtom);
@@ -38,6 +39,9 @@ function App() {
           <Route path="project/:project_id" element={<Project />} />
 
         </Route>
+
+        <Route path="/editor" element={<Editor />} />
+        <Route path="/editor/:project_id" element={<Editor />} />
 
         <Route path="*" element={<PageNotFound />} />
       </Routes>
