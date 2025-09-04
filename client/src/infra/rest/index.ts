@@ -14,6 +14,7 @@ export async function makeRequest<T, D = undefined>(
   isAuthRequired: boolean,
   data?: D,
   hasFullURL?: boolean,
+  headers?: Record<string, string>,
 ): Promise<T> {
   let token: string | null = null;
 
@@ -29,8 +30,9 @@ export async function makeRequest<T, D = undefined>(
     method,
     data,
     headers: {
-      Authorization: token ? `Bearer ${token}` : undefined
-    }
+      Authorization: token ? `Bearer ${token}` : undefined,
+      ...headers,
+    },
   });
   return response.data;
 }
@@ -40,6 +42,7 @@ export async function get<T, D = undefined>(
   isAuthRequired: boolean,
   body?: D,
   hasFullURL: boolean = false,
+  headers?: Record<string, string>,
 ): Promise<T> {
   return makeRequest<T, D>(
     url,
@@ -47,6 +50,7 @@ export async function get<T, D = undefined>(
     isAuthRequired,
     body,
     hasFullURL,
+    headers,
   );
 }
 
@@ -55,6 +59,7 @@ export async function post<T, D = undefined>(
   isAuthRequired: boolean,
   body?: D,
   hasFullURL: boolean = false,
+  headers?: Record<string, string>,
 ): Promise<T> {
   return makeRequest<T, D>(
     url,
@@ -62,6 +67,7 @@ export async function post<T, D = undefined>(
     isAuthRequired,
     body,
     hasFullURL,
+    headers,
   );
 }
 
@@ -70,6 +76,7 @@ export async function put<T, D = undefined>(
   isAuthRequired: boolean,
   body?: D,
   hasFullURL: boolean = false,
+  headers?: Record<string, string>,
 ): Promise<T> {
   return makeRequest<T, D>(
     url,
@@ -77,6 +84,7 @@ export async function put<T, D = undefined>(
     isAuthRequired,
     body,
     hasFullURL,
+    headers,
   );
 }
 
@@ -85,6 +93,7 @@ export async function patch<T, D = undefined>(
   isAuthRequired: boolean,
   body?: D,
   hasFullURL: boolean = false,
+  headers?: Record<string, string>,
 ): Promise<T> {
   return makeRequest<T, D>(
     url,
@@ -92,6 +101,7 @@ export async function patch<T, D = undefined>(
     isAuthRequired,
     body,
     hasFullURL,
+    headers,
   );
 }
 
@@ -100,6 +110,7 @@ export async function del<T, D = undefined>(
   isAuthRequired: boolean,
   body?: D,
   hasFullURL: boolean = false,
+  headers?: Record<string, string>,
 ): Promise<T> {
   return makeRequest<T, D>(
     url,
@@ -107,5 +118,6 @@ export async function del<T, D = undefined>(
     isAuthRequired,
     body,
     hasFullURL,
+    headers,
   );
 }
