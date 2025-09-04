@@ -10,15 +10,22 @@ import {
   GetRepliesPayload,
   GetRepliesResponse,
   DeleteCommentPayload,
-  DeleteCommentResponse
+  DeleteCommentResponse,
+  GetProjectPayload
 } from "../typings";
 
-export const getProject = async ({ project_id }: { project_id: string }) => {
-  return post<GetProjectResponse, { project_id: string }>(
+export const getProject = async ({
+  project_id,
+  draft,
+  mode,
+}: GetProjectPayload) => {
+  return post<GetProjectResponse, GetProjectPayload>(
     `/api/project/get`,
     false,
     {
       project_id,
+      draft,
+      mode,
     }
   );
 };
