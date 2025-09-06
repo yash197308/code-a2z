@@ -11,6 +11,7 @@ import Search from "./modules/search";
 import Profile from "./modules/profile";
 import Project from "./modules/project";
 import Editor from "./modules/editor";
+import Sidebar from "./shared/components/molecules/sidebar";
 
 function App() {
   const [userAuth, setUserAuth] = useAtom(UserAtom);
@@ -37,6 +38,11 @@ function App() {
           <Route path="search/:query" element={<Search />} />
           <Route path="user/:id" element={<Profile />} />
           <Route path="project/:project_id" element={<Project />} />
+
+          <Route path="dashboard" element={<Sidebar />}>
+          </Route>
+          <Route path="settings" element={<Sidebar />}>
+          </Route>
 
         </Route>
 
