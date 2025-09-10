@@ -12,6 +12,7 @@ import Profile from "./modules/profile";
 import Project from "./modules/project";
 import Editor from "./modules/editor";
 import Sidebar from "./shared/components/molecules/sidebar";
+import ChangePassword from "./modules/user-auth-form/change-password";
 
 function App() {
   const [userAuth, setUserAuth] = useAtom(UserAtom);
@@ -22,9 +23,7 @@ function App() {
       // User is authenticated, you can fetch user data or perform other actions
     } else {
       // User is not authenticated, redirect to login or show appropriate UI
-      setUserAuth({
-        access_token: null,
-      });
+      setUserAuth((prev) => ({ ...prev, access_token: "" }));
     }
   }, [userAuth, setUserAuth]);
 
@@ -42,6 +41,7 @@ function App() {
           <Route path="dashboard" element={<Sidebar />}>
           </Route>
           <Route path="settings" element={<Sidebar />}>
+            <Route path="change-password" element={<ChangePassword />} />
           </Route>
 
         </Route>

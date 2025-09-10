@@ -15,3 +15,13 @@ export const authorizeUser = async (
     false,
   );
 };
+
+export const changePassword = async (
+  formData: { [key: string]: string; },
+) => {
+  return post<AuthorizeUserResponse, { [key: string]: string }>(
+    `/api/auth/change-password`,
+    true,
+    formData
+  );
+};

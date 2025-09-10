@@ -10,6 +10,7 @@ interface InputBoxProps {
   icon: string;
   autoComplete?: "on" | "off";
   disable?: boolean;
+  className?: string;
 }
 
 const InputBox = ({
@@ -22,11 +23,12 @@ const InputBox = ({
   icon,
   autoComplete = "on",
   disable = false,
+  className,
 }: InputBoxProps) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
-    <div className="relative w-[100%] mb-4">
+    <div className={className + " relative w-[100%] mb-4"}>
       <input
         name={name}
         type={
