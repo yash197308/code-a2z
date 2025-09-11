@@ -22,3 +22,12 @@ export interface GetUserProfileResponse {
   role: number;
   joinedAt: string;
 }
+
+export interface UploadProfileImageResponse {
+  profile_img: string;
+}
+
+export interface UpdateProfileResponse {
+  message: string;
+  username: string;
+}
