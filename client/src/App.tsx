@@ -14,6 +14,8 @@ import Editor from "./modules/editor";
 import Sidebar from "./shared/components/molecules/sidebar";
 import ChangePassword from "./modules/user-auth-form/change-password";
 import EditProfile from "./modules/profile/edit-profile";
+import ManageProjects from "./modules/project/manage-projects";
+import Notifications from "./modules/notification";
 
 function App() {
   const [userAuth, setUserAuth] = useAtom(UserAtom);
@@ -40,6 +42,8 @@ function App() {
           <Route path="project/:project_id" element={<Project />} />
 
           <Route path="dashboard" element={<Sidebar />}>
+            <Route path="projects" element={<ManageProjects />} />
+            <Route path="notifications" element={<Notifications />} />
           </Route>
           <Route path="settings" element={<Sidebar />}>
             <Route path="edit-profile" element={<EditProfile />} />

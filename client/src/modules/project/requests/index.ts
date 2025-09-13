@@ -1,5 +1,6 @@
 import { post, del } from "../../../infra/rest";
 import { Comment } from "../../../shared/typings";
+import { Project } from "../../../shared/typings/project";
 import { 
   CommentNotificationPayload, 
   CommentNotificationResponse, 
@@ -104,6 +105,29 @@ export const deleteComment = async ({ _id }: DeleteCommentPayload) => {
     true,
     {
       _id
+    }
+  );
+};
+
+export const userWrittenProjects = async ({ page, draft, query = "", deletedDocCount = 0 }: { page: number, draft: boolean, query?: string, deletedDocCount?: number }) => {
+  return post<{ projects: Project[] }, { page: number, draft: boolean, query?: string, deletedDocCount?: number }>(
+    `/api/project/user-written`,
+    true,
+    {
+      page,
+      draft,
+      query,
+      deletedDocCount,
+    }
+  );
+};
+
+export const deleteProject = async ({ project_id }: { project_id: string }) => {
+  return post<{ success: boolean }, { project_id: string }>(
+    `/api/project/delete`,
+    true,
+    {
+      project_id,
     }
   );
 };
