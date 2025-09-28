@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import router from "./routes/index.js";
 import { PORT } from "./constants/env.js";
+import errorHandler from "./middlewares/error.handler.js";
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ const server = express();
 server.use(express.json());
 server.use(cookieParser());
 server.use(cors());
+server.use(errorHandler);
 
 // Connect to Database
 connectDB();
