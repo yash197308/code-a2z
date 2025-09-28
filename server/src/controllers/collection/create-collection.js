@@ -7,7 +7,7 @@ const createCollection = async (req, res) => {
   const { collection_name } = req.body;
 
   const newCollection = new Collection({
-    userId: user_id,
+    user_id,
     collection_name,
   });
 

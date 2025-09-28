@@ -24,7 +24,7 @@ const commentSchema = Schema(
     },
     commented_by: {
       type: Schema.Types.ObjectId,
-      require: true,
+      required: true,
       ref: COLLECTION_NAMES.USERS,
     },
     isReply: {

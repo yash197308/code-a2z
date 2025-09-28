@@ -16,7 +16,7 @@ const subscriberSchema = Schema(
       default: Date.now,
     },
     unsubscribedAt: {
-      type: Date || null,
+      type: Date,
       default: null,
     }
   },

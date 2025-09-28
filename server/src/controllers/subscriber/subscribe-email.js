@@ -18,7 +18,7 @@ const subscribeEmail = async (req, res) => {
     }
 
     subscriber.isSubscribed = true;
-    subscriber.unsubscribedAt = new Date();
+    subscriber.unsubscribedAt = null;
 
     await subscriber.save()
       .then(() => {

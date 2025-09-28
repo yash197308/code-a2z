@@ -5,7 +5,7 @@ const saveProjectInCollection = async (req, res) => {
   const user_id = req.user;
   const { collection_name, project_id } = req.body;
 
-  const existingProject = await Collection.findOne({ userId: user_id, collection_name, project_id });
+  const existingProject = await Collection.findOne({ user_id, collection_name, project_id });
   if (existingProject) {
     return sendResponse(res, 400, "error", "Project already exists in this collection", null);
   }
