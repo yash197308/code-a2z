@@ -1,3 +1,5 @@
+import { EditorBlock } from '../../../shared/typings';
+
 export enum EditorMode {
   EDITOR = 'editor',
   PUBLISH = 'publish',
@@ -10,7 +12,9 @@ export interface CreateProjectPayload {
   des: string;
   repository: string;
   projectUrl: string;
-  content: any;
+  content: Array<{
+    blocks: EditorBlock[];
+  }>;
   tags: string[];
   draft: boolean;
 }

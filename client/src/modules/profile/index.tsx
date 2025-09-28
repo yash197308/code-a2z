@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import AnimationWrapper from '../../shared/components/atoms/page-animation';
 import Loader from '../../shared/components/atoms/loader';
@@ -13,6 +13,8 @@ import { useAtom, useAtomValue } from 'jotai';
 import { ProfileAtom } from '../../shared/states/profile';
 import { UserAtom } from '../../shared/states/user';
 import { AllProjectsAtom } from '../../shared/states/project';
+import { AllProjectsData } from '../../shared/typings/project';
+import { emptyProfileState } from '../../shared/states/emptyStates/profile';
 import { searchProjectByCategory } from '../home/requests';
 import { getUserProfile } from './requests';
 
@@ -25,7 +27,45 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [profileLoaded, setProfileLoaded] = useState('');
 
-  const fetchUserProfile = async () => {
+  const resetState = useCallback(() => {
+    setProfile(emptyProfileState);
+    setLoading(true);
+    setProfileLoaded('');
+  }, [setProfile]);
+
+  const getProjects = useCallback(
+    async (params: Record<string, unknown>) => {
+      const { page = 1, user_id } = params;
+
+      if (typeof user_id !== 'string') return;
+
+      const response = await searchProjectByCategory(
+        user_id,
+        typeof page === 'number' ? page : 1
+      );
+      if (response.projects) {
+        const formattedData = await filterPaginationData({
+          state: projects,
+          data: response.projects,
+          page: typeof page === 'number' ? page : 1,
+          countRoute: '/api/project/search-count',
+          data_to_send: { author: user_id },
+        });
+
+        if (formattedData) {
+          const projectData: AllProjectsData = {
+            results: formattedData.results,
+            page: formattedData.page,
+            totalDocs: formattedData.totalDocs || 0,
+          };
+          setProjects(projectData);
+        }
+      }
+    },
+    [projects, setProjects]
+  );
+
+  const fetchUserProfile = useCallback(async () => {
     if (!profileId) return;
     const response = await getUserProfile(profileId);
     if (response) {
@@ -34,28 +74,7 @@ const Profile = () => {
       setProfileLoaded(profileId);
       setLoading(false);
     }
-  };
-
-  const getProjects = async ({
-    page = 1,
-    user_id,
-  }: {
-    page?: number;
-    user_id: string;
-  }) => {
-    const response = await searchProjectByCategory(user_id, page);
-    if (response.projects) {
-      const formattedData = await filterPaginationData({
-        state: projects,
-        data: response.projects,
-        page,
-        countRoute: '/api/project/search-count',
-        data_to_send: { author: user_id },
-      });
-      formattedData.user_id = user_id;
-      setProjects(formattedData);
-    }
-  };
+  }, [profileId, setProfile, getProjects]);
 
   useEffect(() => {
     if (profileId !== profileLoaded) {
@@ -65,13 +84,14 @@ const Profile = () => {
       resetState();
       fetchUserProfile();
     }
-  }, [profileId, projects]);
-
-  const resetState = () => {
-    setProfile(null);
-    setLoading(true);
-    setProfileLoaded('');
-  };
+  }, [
+    profileId,
+    projects,
+    profileLoaded,
+    fetchUserProfile,
+    resetState,
+    setProjects,
+  ]);
 
   if (!user || !profile) {
     return <Loader />;

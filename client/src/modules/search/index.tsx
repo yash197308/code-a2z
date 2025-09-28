@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import InPageNavigation from '../../shared/components/molecules/page-navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Loader from '../../shared/components/atoms/loader';
 import AnimationWrapper from '../../shared/components/atoms/page-animation';
 import ProjectPostCard from '../../shared/components/molecules/project-card';
@@ -13,6 +13,7 @@ import { AllProjectsAtom } from '../../shared/states/project';
 import { searchProjectByCategory } from '../home/requests';
 import { searchUserByName } from './requests';
 import { UserProfile } from './typings';
+import { AllProjectsData } from '../../shared/typings';
 
 const Search = () => {
   const { query } = useParams();
@@ -20,40 +21,45 @@ const Search = () => {
   const [projects, setProjects] = useAtom(AllProjectsAtom);
   const [users, setUsers] = useState<UserProfile[] | null>(null);
 
-  const searchProjects = async ({ page = 1, create_new_arr = false }) => {
-    if (!query) return;
-    const response = await searchProjectByCategory(query, page);
-    if (response?.projects) {
-      const formattedData = await filterPaginationData({
-        state: projects,
-        data: response.projects,
-        page,
-        countRoute: '/api/project/search-count',
-        data_to_send: { tag: query },
-        create_new_arr,
-      });
-      setProjects(formattedData);
-    }
-  };
+  const resetState = useCallback(() => {
+    setProjects(null);
+    setUsers(null);
+  }, [setProjects, setUsers]);
 
-  const fetchUsers = async () => {
+  const searchProjects = useCallback(
+    async ({ page = 1, create_new_arr = false }) => {
+      if (!query) return;
+      const response = await searchProjectByCategory(query, page);
+      if (response?.projects) {
+        const formattedData = await filterPaginationData({
+          state: projects,
+          data: response.projects,
+          page,
+          countRoute: '/api/project/search-count',
+          data_to_send: { tag: query },
+          create_new_arr,
+        });
+        if (formattedData) {
+          setProjects(formattedData as AllProjectsData);
+        }
+      }
+    },
+    [query, projects, setProjects]
+  );
+
+  const fetchUsers = useCallback(async () => {
     if (!query) return;
     const response = await searchUserByName(query);
     if (response?.users) {
       setUsers(response.users);
     }
-  };
+  }, [query]);
 
   useEffect(() => {
     resetState();
     searchProjects({ page: 1, create_new_arr: true });
     fetchUsers();
-  }, [query]);
-
-  const resetState = () => {
-    setProjects(null);
-    setUsers(null);
-  };
+  }, [query, resetState, searchProjects, fetchUsers]);
 
   const UserCardWrapper = () => {
     return (
@@ -61,7 +67,7 @@ const Search = () => {
         {!users ? (
           <Loader />
         ) : users?.length ? (
-          users.map((user, i) => {
+          users.map((user: UserProfile, i: number) => {
             return (
               <AnimationWrapper
                 key={i}

@@ -3,12 +3,13 @@ import AnimationWrapper from '../../../atoms/page-animation';
 import { removeFromSession } from '../../../../utils/session';
 import { useAtom } from 'jotai';
 import { UserAtom } from '../../../../states/user';
+import { emptyUserState } from '../../../../states/emptyStates/user';
 
 const UserNavigationPanel = () => {
   const [user, setUser] = useAtom(UserAtom);
   const signOutUser = () => {
     removeFromSession('user');
-    setUser({ access_token: null });
+    setUser(emptyUserState);
   };
 
   return (

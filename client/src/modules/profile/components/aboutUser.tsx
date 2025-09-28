@@ -20,7 +20,7 @@ const AboutUser = ({
 
       <div className="flex gap-x-7 gap-y-2 flex-wrap my-7 items-center text-gray-700">
         {Object.keys(social_links).map(key => {
-          let link = social_links[key];
+          const link = social_links[key];
           return link ? (
             <Link to={link} key={key} target="_blank">
               <i

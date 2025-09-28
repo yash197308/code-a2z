@@ -9,6 +9,7 @@ export const emptyProfileState: Profile = {
     bio: '',
   },
   social_links: {
+    youtube: '',
     github: '',
     twitter: '',
     facebook: '',
@@ -20,4 +21,6 @@ export const emptyProfileState: Profile = {
     total_reads: 0,
   },
   joinedAt: '',
+  role: 0,
+  _id: '',
 };

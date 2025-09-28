@@ -27,7 +27,7 @@ const ProjectInteraction = () => {
       }
     };
     fetchLikeStatus();
-  }, [project?._id]);
+  }, [project?._id, setLikedByUser, user?.access_token]);
 
   const handleLike = async () => {
     if (!project?._id || !user?.access_token) {
@@ -56,6 +56,7 @@ const ProjectInteraction = () => {
         message: 'Please login to like this project',
         type: 'error',
       });
+      console.error('Like error:', error);
     }
   };
 

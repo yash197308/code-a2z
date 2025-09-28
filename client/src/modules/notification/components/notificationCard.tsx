@@ -1,12 +1,29 @@
 import { Link } from 'react-router-dom';
-import { getDay } from '../../../shared/utils/date';
 import { useState } from 'react';
+import { useAtom } from 'jotai';
+import { getDay } from '../../../shared/utils/date';
 import NotificationCommentField from './notificationCommentField';
+import { UserAtom } from '../../../shared/states/user';
+import { NotificationData, NotificationState } from '../../../shared/typings';
+import axios from 'axios';
 
-const NotificationCard = ({ data, index, notificationState }) => {
-  let [isReplying, setIsReplying] = useState(false);
+interface NotificationCardProps {
+  data: NotificationData;
+  index: number;
+  notificationState: {
+    notifications: NotificationState;
+    setNotifications: (state: NotificationState) => void;
+  };
+}
 
-  let {
+const NotificationCard = ({
+  data,
+  index,
+  notificationState,
+}: NotificationCardProps) => {
+  const [isReplying, setIsReplying] = useState(false);
+
+  const {
     seen,
     type,
     reply,
@@ -14,22 +31,20 @@ const NotificationCard = ({ data, index, notificationState }) => {
     comment,
     replied_on_comment,
     user,
-    user: {
-      personal_info: { fullname, username, profile_img },
-    },
-    project: { _id, project_id, title },
+    user: { personal_info: { fullname, username, profile_img } = {} } = {},
+    project: { _id = '', project_id = '', title = '' } = {},
     _id: notification_id,
   } = data;
 
-  let {
-    userAuth: {
-      username: author_username,
-      profile_img: author_profile_img,
-      access_token,
-    },
-  } = useContext(UserContext);
+  const [userAuth] = useAtom(UserAtom);
 
-  let {
+  const {
+    username: author_username,
+    profile_img: author_profile_img,
+    access_token,
+  } = userAuth;
+
+  const {
     notifications,
     notifications: { results, totalDocs },
     setNotifications,
@@ -39,8 +54,14 @@ const NotificationCard = ({ data, index, notificationState }) => {
     setIsReplying(preVal => !preVal);
   };
 
-  const handleDelete = (comment_id, type, target) => {
-    target.setAttribute('disabled', true);
+  const handleDelete = (
+    comment_id: string,
+    type: string,
+    target: EventTarget | null
+  ) => {
+    if (!(target instanceof HTMLElement)) return;
+
+    target.setAttribute('disabled', 'true');
 
     axios
       .post(
@@ -64,10 +85,10 @@ const NotificationCard = ({ data, index, notificationState }) => {
           ...notifications,
           results,
           totalDocs: totalDocs - 1,
-          deleteDocCount: notifications.deleteDocCount + 1,
+          deleteDocCount: (notifications.deleteDocCount || 0) + 1,
         });
       })
-      .catch(err => {
+      .catch((err: unknown) => {
         console.log(err);
       });
   };
@@ -107,7 +128,7 @@ const NotificationCard = ({ data, index, notificationState }) => {
 
           {type === 'reply' ? (
             <div className="p-4 mt-4 rounded-md bg-gray-100 dark:bg-gray-700">
-              <p>{replied_on_comment.comment}</p>
+              <p>{replied_on_comment?.comment || 'No comment'}</p>
             </div>
           ) : (
             <Link
@@ -122,7 +143,7 @@ const NotificationCard = ({ data, index, notificationState }) => {
 
       {type !== 'like' ? (
         <p className="ml-14 pl-5 font-gelasio text-xl my-5">
-          {comment.comment}
+          {comment?.comment || 'No comment'}
         </p>
       ) : (
         ''
@@ -146,7 +167,9 @@ const NotificationCard = ({ data, index, notificationState }) => {
 
             <button
               className="underline hover:text-black dark:hover:text-white"
-              onClick={e => handleDelete(comment._id, 'comment', e.target)}
+              onClick={e =>
+                handleDelete(comment?._id || '', 'comment', e.target)
+              }
             >
               Delete
             </button>
@@ -160,9 +183,9 @@ const NotificationCard = ({ data, index, notificationState }) => {
         <div className="mt-8">
           <NotificationCommentField
             _id={_id}
-            project_author={user}
+            project_author={{ _id: user?.personal_info?.username || '' }}
             index={index}
-            replyingTo={comment._id}
+            replyingTo={comment?._id}
             setReplying={setIsReplying}
             notification_id={notification_id}
             notificationData={notificationState}

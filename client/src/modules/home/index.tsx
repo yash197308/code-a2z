@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import ProjectPostCard from '../../shared/components/molecules/project-card';
 import MinimalProjectPost from './components/noBannerProject';
 import NoDataMessage from '../../shared/components/atoms/no-data-msg';
 import LoadMoreDataBtn from '../../shared/components/molecules/load-more-data';
 import AnimationWrapper from '../../shared/components/atoms/page-animation';
 import { filterPaginationData } from '../../shared/requests/filter-pagination-data';
-import InPageNavigation, {
-  activeTabRef,
-} from '../../shared/components/molecules/page-navigation';
+import InPageNavigation from '../../shared/components/molecules/page-navigation';
+import { activeTabRef } from '../../shared/components/molecules/page-navigation/refs';
 import LatestProjectsSkeleton from './components/latestProjectsSkeleton';
 import TrendingProjectsSkeleton from './components/trendingProjectsSkeleton';
+import type { Project, AllProjectsData } from '../../shared/typings';
 import {
   getAllLatestProjects,
   getTrendingProjects,
@@ -38,54 +38,62 @@ const Home = () => {
 
   const [pageState, setPageState] = useState('home');
 
-  const fetchLatestProjects = async ({ page = 1 }) => {
-    const response = await getAllLatestProjects(page);
-    if (response.projects.length > 0) {
-      const formattedData = await filterPaginationData({
-        state: projects,
-        data: response.projects,
-        page,
-        countRoute: '/api/project/all-latest-count',
-      });
-      if (formattedData.results) {
-        setProjects(formattedData);
+  const fetchLatestProjects = useCallback(
+    async ({ page = 1 }) => {
+      const response = await getAllLatestProjects(page);
+      if (response.projects.length > 0) {
+        const formattedData = await filterPaginationData<Project>({
+          state: projects,
+          data: response.projects,
+          page,
+          countRoute: '/api/project/all-latest-count',
+        });
+        if (formattedData?.results) {
+          setProjects(formattedData as AllProjectsData);
+        } else {
+          addNotification({
+            message: 'No Project Found!',
+            type: 'error',
+          });
+        }
       } else {
         addNotification({
-          message: 'No Project Found!',
+          message: 'No Projects Found!',
           type: 'error',
         });
       }
-    } else {
-      addNotification({
-        message: 'No Projects Found!',
-        type: 'error',
-      });
-    }
-  };
+    },
+    [projects, addNotification, setProjects]
+  );
 
-  const fetchProjectsByCategory = async ({ page = 1 }) => {
-    const response = await searchProjectByCategory(pageState, page);
-    if (response.projects.length > 0) {
-      const formattedData = await filterPaginationData({
-        state: projects,
-        data: response.projects,
-        page,
-        countRoute: '/api/project/search-count',
-        data_to_send: { tag: pageState },
-      });
-      setProjects(formattedData);
-    }
-  };
+  const fetchProjectsByCategory = useCallback(
+    async ({ page = 1 }) => {
+      const response = await searchProjectByCategory(pageState, page);
+      if (response.projects.length > 0) {
+        const formattedData = await filterPaginationData<Project>({
+          state: projects,
+          data: response.projects,
+          page,
+          countRoute: '/api/project/search-count',
+          data_to_send: { tag: pageState },
+        });
+        if (formattedData) {
+          setProjects(formattedData as AllProjectsData);
+        }
+      }
+    },
+    [projects, pageState, setProjects]
+  );
 
-  const fetchTrendingProjects = async () => {
+  const fetchTrendingProjects = useCallback(async () => {
     const response = await getTrendingProjects();
     if (response.projects.length > 0) {
       setTrendingProjects(response.projects);
     }
-  };
+  }, [setTrendingProjects]);
 
   const loadProjectsByCategory = (e: React.MouseEvent<HTMLButtonElement>) => {
-    let category = (e.target as HTMLButtonElement).innerText.toLowerCase();
+    const category = (e.target as HTMLButtonElement).innerText.toLowerCase();
     setProjects(null);
 
     if (pageState === category) {
@@ -108,7 +116,13 @@ const Home = () => {
     if (!trendingProjects) {
       fetchTrendingProjects();
     }
-  }, [pageState]);
+  }, [
+    pageState,
+    fetchLatestProjects,
+    fetchProjectsByCategory,
+    fetchTrendingProjects,
+    trendingProjects,
+  ]);
 
   return (
     <AnimationWrapper>

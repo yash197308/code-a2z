@@ -1,9 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-
-import type { RefObject } from 'react';
-
-export let activeTabLineRef: RefObject<HTMLHRElement | null>;
-export let activeTabRef: RefObject<HTMLButtonElement | null>;
+import { useEffect, useState } from 'react';
+import { activeTabLineRef, activeTabRef } from './refs';
 
 interface InPageNavigationProps {
   routes: string[];
@@ -18,16 +14,13 @@ const InPageNavigation = ({
   defaultActiveIndex = 0,
   children,
 }: InPageNavigationProps) => {
-  activeTabLineRef = useRef<HTMLHRElement>(null);
-  activeTabRef = useRef<HTMLButtonElement>(null);
-
   const [inPageNavIndex, setInPageNavIndex] = useState(defaultActiveIndex);
 
   const [isResizeEventAdded, setIsResizeEventAdded] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
 
   const changePageState = (btn: EventTarget, i: number) => {
-    let { offsetWidth, offsetLeft } = btn as HTMLElement;
+    const { offsetWidth, offsetLeft } = btn as HTMLElement;
     if (activeTabLineRef && activeTabLineRef.current) {
       activeTabLineRef.current.style.width = offsetWidth + 'px';
       activeTabLineRef.current.style.left = offsetLeft + 'px';
@@ -54,7 +47,7 @@ const InPageNavigation = ({
         setWidth(window.innerWidth);
       });
     }
-  }, [width]);
+  }, [width, defaultActiveIndex, inPageNavIndex, isResizeEventAdded]);
 
   return (
     <>

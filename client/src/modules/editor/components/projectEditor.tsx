@@ -9,6 +9,7 @@ import { ProjectAtom } from '../../../shared/states/project';
 import { EditorAtom, TextEditorAtom } from '../states';
 import { useNotifications } from '../../../shared/hooks/use-notification';
 import { createProject } from '../requests';
+import type { EditorBlock } from '../../../shared/typings';
 import { EditorMode } from '../typings';
 import { defaultBanner } from '../constants';
 
@@ -38,7 +39,7 @@ const ProjectEditor = () => {
   }, [textEditor.isReady, project?.content, setTextEditor]);
 
   const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let img = e.target.files?.[0];
+    const img = e.target.files?.[0];
 
     if (img) {
       uploadImage(img)
@@ -65,7 +66,7 @@ const ProjectEditor = () => {
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    let textarea = e.target;
+    const textarea = e.target;
 
     textarea.style.height = 'auto';
     textarea.style.height = textarea.scrollHeight + 'px';
@@ -76,12 +77,12 @@ const ProjectEditor = () => {
   const handleRepositoryURLChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    let input = e.target;
+    const input = e.target;
     setProject(prev => (prev ? { ...prev, repository: input.value } : null));
   };
 
   const handleProjectURLChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let input = e.target;
+    const input = e.target;
     setProject(prev => (prev ? { ...prev, projectUrl: input.value } : null));
   };
 
@@ -101,7 +102,7 @@ const ProjectEditor = () => {
     if (textEditor.isReady) {
       textEditor.editor
         ?.save()
-        .then((outputData: { blocks: any[] }) => {
+        .then((outputData: { blocks: EditorBlock[] }) => {
           if (outputData.blocks.length) {
             setProject(prev =>
               prev

@@ -55,13 +55,27 @@ const ProjectContent = ({
 }: {
   block: {
     type: string;
-    data: any;
+    data: {
+      text?: string;
+      level?: number;
+      items?: string[];
+      code?: string;
+      caption?: string;
+      stretched?: boolean;
+      withBackground?: boolean;
+      withBorder?: boolean;
+      url?: string;
+      source?: string;
+      title?: string;
+      file?: { url: string };
+      style?: string;
+    };
   };
 }) => {
   const { type, data } = block;
 
   if (type === 'paragraph') {
-    return <p dangerouslySetInnerHTML={{ __html: data.text }}></p>;
+    return <p dangerouslySetInnerHTML={{ __html: data.text || '' }}></p>;
   }
 
   if (type === 'header') {
@@ -69,28 +83,33 @@ const ProjectContent = ({
       return (
         <h3
           className="text-3xl font-bold"
-          dangerouslySetInnerHTML={{ __html: data.text }}
+          dangerouslySetInnerHTML={{ __html: data.text || '' }}
         ></h3>
       );
     }
     return (
       <h2
         className="text-4xl font-bold"
-        dangerouslySetInnerHTML={{ __html: data.text }}
+        dangerouslySetInnerHTML={{ __html: data.text || '' }}
       ></h2>
     );
   }
 
   if (type === 'image') {
-    return <Img url={data.file.url} caption={data.caption} />;
+    return <Img url={data.file?.url || ''} caption={data.caption || ''} />;
   }
 
   if (type === 'quote') {
-    return <Quote quote={data.text} caption={data.caption} />;
+    return <Quote quote={data.text || ''} caption={data.caption || ''} />;
   }
 
   if (type === 'list') {
-    return <List style={data.style} items={data.items} />;
+    return (
+      <List
+        style={(data.style as 'ordered' | 'unordered') || 'unordered'}
+        items={data.items || []}
+      />
+    );
   }
 };
 

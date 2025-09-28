@@ -29,7 +29,10 @@ const UserAuthForm = ({ type }: { type: string }) => {
         profile_img: response.profile_img,
         username: response.username,
         fullname: response.fullname,
+        name: response.fullname, // Use fullname as name
+        email: response.email,
         role: response.role,
+        new_notification_available: false,
       });
       addNotification({
         message: 'Logged in successfully!',
@@ -43,24 +46,25 @@ const UserAuthForm = ({ type }: { type: string }) => {
   const handleSubmit = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
 
-    let serverRoute = type == 'login' ? '/api/auth/login' : '/api/auth/signup';
+    const serverRoute =
+      type == 'login' ? '/api/auth/login' : '/api/auth/signup';
 
     if (!formRef.current) return;
 
-    let form = new FormData(formRef.current);
-    let formData: AuthorizeUserPayload = {
+    const form = new FormData(formRef.current);
+    const formData: AuthorizeUserPayload = {
       email: '',
       password: '',
       fullname: '',
     };
 
-    for (let [key, value] of form.entries()) {
+    for (const [key, value] of form.entries()) {
       if (key === 'email' || key === 'password' || key === 'fullname') {
         formData[key as keyof AuthorizeUserPayload] = value as string;
       }
     }
 
-    let { fullname, email, password } = formData;
+    const { fullname, email, password } = formData;
 
     if (fullname) {
       if (fullname.length < 3) {

@@ -31,21 +31,21 @@ const PublishForm = () => {
   };
 
   const handleProjectTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let input = e.target;
+    const input = e.target;
     setProject(prev => (prev ? { ...prev, title: input.value } : null));
   };
 
   const handleProjectDesChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    let input = e.target;
-    setProject(prev => (prev ? { ...prev, des: input.value } : null));
+    const textarea = e.target;
+    setProject(prev => (prev ? { ...prev, des: textarea.value } : null));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13 || e.keyCode === 188) {
       e.preventDefault();
-      let tag = e.currentTarget.value;
+      const tag = e.currentTarget.value;
 
       if (tags && tags.length < tagLimit) {
         if (!tags.includes(tag) && tag.length) {
@@ -104,7 +104,7 @@ const PublishForm = () => {
         banner,
         projectUrl,
         repository,
-        content,
+        content: content || [],
         tags,
         draft: false,
       })

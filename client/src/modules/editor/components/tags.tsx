@@ -13,7 +13,7 @@ const Tag = ({ tag, tagIndex }: { tag: string; tagIndex: number }) => {
   const handleTagEdit = (e: React.KeyboardEvent<HTMLParagraphElement>) => {
     if (e.keyCode === 13 || e.keyCode === 188) {
       e.preventDefault();
-      let currentTag = e.currentTarget.innerText;
+      const currentTag = e.currentTarget.innerText;
       tags[tagIndex] = currentTag;
       setProject(prev => (prev ? { ...prev, tags } : null));
       e.currentTarget.setAttribute('contentEditable', 'false');

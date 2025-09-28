@@ -21,7 +21,11 @@ const Navbar = () => {
       if (user?.access_token) {
         const response = await checkNewNotifications();
         if (response.status === 200) {
-          setUser(prev => ({ ...prev, ...(response as any).data }));
+          setUser(prev => ({
+            ...prev,
+            ...(response as { data: { new_notification_available: boolean } })
+              .data,
+          }));
         }
       }
     };

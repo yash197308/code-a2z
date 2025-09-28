@@ -81,7 +81,7 @@ const CommentField = ({
             commentWithUser.childrenLevel =
               (parentComment.childrenLevel || 0) + 1;
             commentWithUser.parentIndex = index;
-            (parentComment as any).isReplyLoaded = true;
+            (parentComment as Comment).isReplyLoaded = true;
 
             newCommentArr = [...currentComments];
             newCommentArr.splice(index + 1, 0, commentWithUser);
@@ -117,6 +117,7 @@ const CommentField = ({
         message: 'Failed to post comment',
         type: 'error',
       });
+      console.error('Comment error:', error);
     }
   };
 

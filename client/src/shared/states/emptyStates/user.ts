@@ -1,7 +1,7 @@
 import { User } from '../../typings/user';
 
 export const emptyUserState: User = {
-  access_token: '',
+  access_token: null,
   username: '',
   email: '',
   fullname: '',

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { filterPaginationData } from '../../../shared/requests/filter-pagination-data';
 import InPageNavigation from '../../../shared/components/molecules/page-navigation';
 import Loader from '../../../shared/components/atoms/loader';
@@ -11,39 +11,60 @@ import {
 import LoadMoreDataBtn from '../../../shared/components/molecules/load-more-data';
 import { useSearchParams } from 'react-router-dom';
 import { useAtom, useAtomValue } from 'jotai';
-import { DraftProjectAtom, ProjectAtom } from '../../../shared/states/project';
+import {
+  DraftProjectAtom,
+  AllProjectsAtom,
+} from '../../../shared/states/project';
 import { UserAtom } from '../../../shared/states/user';
 import { userWrittenProjects } from '../requests';
+import { AllProjectsData } from '../../../shared/typings';
 
 const ManageProjects = () => {
-  const [projects, setProjects] = useAtom(ProjectAtom);
+  const [projects, setProjects] = useAtom(AllProjectsAtom);
   const [drafts, setDrafts] = useAtom(DraftProjectAtom);
   const user = useAtomValue(UserAtom);
 
   const activeTab = useSearchParams()[0].get('tab');
   const [query, setQuery] = useState('');
 
-  const getProjects = ({ page, draft, deletedDocCount = 0 }) => {
-    userWrittenProjects({ page, draft, query, deletedDocCount })
-      .then(async ({ data }) => {
-        const formattedData = await filterPaginationData({
-          state: draft ? drafts : projects,
-          data: data.projects,
-          page,
-          countRoute: '/api/project/user-written-count',
-          data_to_send: { draft, query },
-        });
+  const getProjects = useCallback(
+    (params: Record<string, unknown>) => {
+      const { page = 1, draft = false, deletedDocCount = 0 } = params;
 
-        if (draft) {
-          setDrafts(formattedData);
-        } else {
-          setProjects(formattedData);
-        }
+      userWrittenProjects({
+        page: page as number,
+        draft: draft as boolean,
+        query,
+        deletedDocCount: deletedDocCount as number,
       })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+        .then(async data => {
+          const formattedData = (await filterPaginationData({
+            state: draft ? drafts : projects,
+            data: data.projects || [],
+            page: page as number,
+            countRoute: '/search-projects-count',
+            data_to_send: {
+              query,
+              tag: query,
+              author: user.username || '',
+              draft,
+            },
+          })) as AllProjectsData;
+
+          if (formattedData) {
+            if (draft) {
+              setDrafts(formattedData);
+            } else {
+              setProjects(formattedData);
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    [drafts, projects, query, setDrafts, setProjects, user.username]
+  );
 
   useEffect(() => {
     if (user.access_token) {
@@ -54,7 +75,7 @@ const ManageProjects = () => {
         getProjects({ page: 1, draft: true });
       }
     }
-  }, [user.access_token, projects, drafts, query]);
+  }, [user.access_token, projects, drafts, query, getProjects]);
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const searchQuery = e.currentTarget.value;

@@ -1,14 +1,20 @@
-interface LoadMoreDataBtnProps {
-  state: any;
-  fetchDataFun: (params: any) => void;
-  additionalParam?: any;
+interface PaginationState<T = unknown> {
+  results: T[];
+  page: number;
+  totalDocs: number;
 }
 
-const LoadMoreDataBtn = ({
+interface LoadMoreDataBtnProps<T = unknown> {
+  state: PaginationState<T> | null;
+  fetchDataFun: (params: Record<string, unknown>) => void;
+  additionalParam?: Record<string, unknown>;
+}
+
+const LoadMoreDataBtn = <T = unknown,>({
   state,
   fetchDataFun,
-  additionalParam,
-}: LoadMoreDataBtnProps) => {
+  additionalParam = {},
+}: LoadMoreDataBtnProps<T>) => {
   if (state && state.results && state.totalDocs > state.results.length) {
     return (
       <button

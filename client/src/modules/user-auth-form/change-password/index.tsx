@@ -16,7 +16,7 @@ const ChangePassword = () => {
     const form = new FormData(changePasswordForm.current);
     const formData: { [key: string]: string } = {};
 
-    for (let [key, value] of form.entries()) {
+    for (const [key, value] of form.entries()) {
       formData[key] = value as string;
     }
 

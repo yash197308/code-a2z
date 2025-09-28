@@ -97,7 +97,7 @@ const CommentCard = ({
     }
 
     if (isDelete) {
-      let parentIndex = getParentIndex();
+      const parentIndex = getParentIndex();
 
       if (parentIndex !== undefined && newCommentsArr[parentIndex]) {
         const parentComment = newCommentsArr[parentIndex];
@@ -107,7 +107,7 @@ const CommentCard = ({
           );
 
           if (!parentComment.children.length) {
-            (parentComment as any).isReplyLoaded = false;
+            (parentComment as Comment).isReplyLoaded = false;
           }
         }
       }
@@ -148,7 +148,7 @@ const CommentCard = ({
       });
 
       const newCommentsArr = [...commentsArr];
-      (newCommentsArr[currentIndex] as any).isReplyLoaded = true;
+      (newCommentsArr[currentIndex] as Comment).isReplyLoaded = true;
 
       for (let i = 0; i < response.replies.length; i++) {
         response.replies[i].childrenLevel =
@@ -187,7 +187,7 @@ const CommentCard = ({
   };
 
   const hideReplies = () => {
-    (commentData as any).isReplyLoaded = false;
+    (commentData as Comment).isReplyLoaded = false;
     removeCommentsCards(index + 1);
   };
 
@@ -202,9 +202,9 @@ const CommentCard = ({
   };
 
   const LoadMoreRepliesButton = () => {
-    let parentIndex = getParentIndex();
+    const parentIndex = getParentIndex();
 
-    let btn = (
+    const btn = (
       <button
         onClick={() =>
           loadReplies({

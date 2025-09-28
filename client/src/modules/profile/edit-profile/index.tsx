@@ -16,8 +16,8 @@ const EditProfile = () => {
   const [profile, setProfile] = useAtom(ProfileAtom);
   const { addNotification } = useNotifications();
 
-  let profileImgEle = useRef<HTMLImageElement>(null);
-  let editProfileForm = useRef<HTMLFormElement>(null);
+  const profileImgEle = useRef<HTMLImageElement>(null);
+  const editProfileForm = useRef<HTMLFormElement>(null);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [charactersLeft, setCharactersLeft] = useState<number>(bioLimit);
@@ -46,14 +46,14 @@ const EditProfile = () => {
           setLoading(false);
         });
     }
-  }, [user.access_token]);
+  }, [user.access_token, user.username, setProfile]);
 
   const handleCharacterChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCharactersLeft(bioLimit - e.currentTarget.value.length);
   };
 
   const handleImagePreview = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let img = e.currentTarget.files?.[0];
+    const img = e.currentTarget.files?.[0];
     if (profileImgEle.current && img) {
       profileImgEle.current.src = URL.createObjectURL(img);
       setUpdatedProfileImg(img);
@@ -71,7 +71,7 @@ const EditProfile = () => {
           if (url) {
             uploadProfileImage(url)
               .then(response => {
-                let newUser = { ...user, profile_img: response.profile_img };
+                const newUser = { ...user, profile_img: response.profile_img };
                 storeInSession('user', JSON.stringify(newUser));
                 setUser(newUser);
 
@@ -101,14 +101,14 @@ const EditProfile = () => {
     e.preventDefault();
 
     if (!editProfileForm.current) return;
-    let form = new FormData(editProfileForm.current);
-    let formData: { [key: string]: FormDataEntryValue } = {};
+    const form = new FormData(editProfileForm.current);
+    const formData: { [key: string]: FormDataEntryValue } = {};
 
-    for (let [key, value] of form.entries()) {
+    for (const [key, value] of form.entries()) {
       formData[key] = value;
     }
 
-    let {
+    const {
       username,
       bio,
       youtube,
@@ -147,7 +147,7 @@ const EditProfile = () => {
     )
       .then(response => {
         if (user.username != response.username) {
-          let newUserAuth = { ...user, username: response.username };
+          const newUserAuth = { ...user, username: response.username };
           storeInSession('user', JSON.stringify(newUserAuth));
           setUser(newUserAuth);
         }
@@ -260,7 +260,7 @@ const EditProfile = () => {
                 {(
                   Object.keys(social_links) as Array<keyof typeof social_links>
                 ).map((key, i) => {
-                  let link = social_links[key];
+                  const link = social_links[key];
 
                   return (
                     <InputBox

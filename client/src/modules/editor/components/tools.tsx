@@ -27,7 +27,7 @@ const uploadImageByFile = async (e: File) => {
 };
 
 const uploadImageByURL = async (e: string) => {
-  let link = new Promise((resolve, reject) => {
+  const link = new Promise((resolve, reject) => {
     try {
       resolve(e);
     } catch (err) {

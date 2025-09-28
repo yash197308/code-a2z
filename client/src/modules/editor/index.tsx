@@ -38,7 +38,7 @@ const Editor = () => {
     };
 
     fetchProject();
-  }, []);
+  }, [project_id, setProject]);
 
   if (!user?.access_token) {
     return <Navigate to="/login" />;

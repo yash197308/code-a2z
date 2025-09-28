@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import AnimationWrapper from '../../shared/components/atoms/page-animation';
 import { getDay } from '../../shared/utils/date';
 import ProjectInteraction from './components/projectInteraction';
 import ProjectPostCard from '../../shared/components/molecules/project-card';
 import ProjectContent from './components/projectContent';
-import CommentsContainer, { fetchComments } from './components/comments';
+import CommentsContainer from './components/comments';
+import { fetchComments } from './utils/fetchComments';
 import ProjectLoadingSkeleton from './components/projectLoadingSkeleton';
 import { useAtom, useSetAtom } from 'jotai';
 import { ProjectAtom } from '../../shared/states/project';
@@ -31,7 +32,22 @@ const Project = () => {
   );
   const [loading, setLoading] = useState(true);
 
-  const fetchProject = async () => {
+  const resetStates = useCallback(() => {
+    setProject(null);
+    setSimilarProjects(null);
+    setLoading(true);
+    setLikedByUser(false);
+    setCommentsWrapper(false);
+    setTotalParentCommentsLoaded(0);
+  }, [
+    setCommentsWrapper,
+    setLikedByUser,
+    setProject,
+    setSimilarProjects,
+    setTotalParentCommentsLoaded,
+  ]);
+
+  const fetchProject = useCallback(async () => {
     if (!project_id) return;
 
     try {
@@ -69,21 +85,17 @@ const Project = () => {
       console.error('Error fetching project:', error);
       setLoading(false);
     }
-  };
+  }, [
+    project_id,
+    setProject,
+    setSimilarProjects,
+    setTotalParentCommentsLoaded,
+  ]);
 
   useEffect(() => {
     resetStates();
     fetchProject();
-  }, [project_id]);
-
-  const resetStates = () => {
-    setProject(null);
-    setSimilarProjects(null);
-    setLoading(true);
-    setLikedByUser(false);
-    setCommentsWrapper(false);
-    setTotalParentCommentsLoaded(0);
-  };
+  }, [resetStates, fetchProject]);
 
   if (loading) {
     return (

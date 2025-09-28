@@ -1,18 +1,38 @@
 import { useState } from 'react';
+import axios from 'axios';
+import { useAtom } from 'jotai';
+import { UserAtom } from '../../../shared/states/user';
+import { NotificationState } from '../../../shared/typings';
+
+interface NotificationCommentFieldProps {
+  _id: string;
+  project_author: {
+    _id: string;
+  };
+  index?: number;
+  replyingTo?: string;
+  setReplying: (value: boolean) => void;
+  notification_id: string;
+  notificationData: {
+    notifications: NotificationState;
+    setNotifications: (state: NotificationState) => void;
+  };
+}
 
 const NotificationCommentField = ({
   _id,
   project_author,
-  index = undefined,
-  replyingTo = undefined,
+  index,
+  replyingTo,
   setReplying,
   notification_id,
   notificationData,
-}) => {
-  let [comment, setComment] = useState('');
+}: NotificationCommentFieldProps) => {
+  const [comment, setComment] = useState('');
+  const [user] = useAtom(UserAtom);
 
-  let { _id: user_id } = project_author;
-  let {
+  const { _id: user_id } = project_author;
+  const {
     notifications,
     notifications: { results },
     setNotifications,
@@ -20,7 +40,13 @@ const NotificationCommentField = ({
 
   const handleComment = () => {
     if (!comment.length) {
-      return toast.error('Write something to leave a comment...');
+      console.error('Write something to leave a comment...');
+      return;
+    }
+
+    if (!user.access_token) {
+      console.error('User not authenticated');
+      return;
     }
 
     axios
@@ -35,17 +61,19 @@ const NotificationCommentField = ({
         },
         {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${user.access_token}`,
           },
         }
       )
-      .then(({ data }) => {
+      .then(({ data }: { data: { _id: string } }) => {
         setReplying(false);
 
-        results[index].reply = { comment, _id: data._id };
-        setNotifications({ ...notifications, results });
+        if (typeof index === 'number' && results[index]) {
+          results[index].reply = { comment, _id: data._id };
+          setNotifications({ ...notifications, results });
+        }
       })
-      .catch(err => {
+      .catch((err: unknown) => {
         console.log(err);
       });
   };
