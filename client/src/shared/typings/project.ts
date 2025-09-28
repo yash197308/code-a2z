@@ -31,7 +31,7 @@ export interface Project {
     results: Comment[];
   };
   _id?: string;
-};
+}
 
 export interface TrendingProject {
   project_id: string;
@@ -44,8 +44,8 @@ export interface TrendingProject {
     };
   };
   publishedAt: string;
-};
+}
 
 export interface AllProjectsData {
   results: Project[];
-};
+}

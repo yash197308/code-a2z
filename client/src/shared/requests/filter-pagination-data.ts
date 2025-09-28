@@ -1,4 +1,4 @@
-import { post } from "../../infra/rest";
+import { post } from '../../infra/rest';
 
 interface FilterPaginationDataParams {
   create_new_arr?: boolean;
@@ -7,11 +7,11 @@ interface FilterPaginationDataParams {
   page: number;
   countRoute: string;
   data_to_send?: any;
-};
+}
 
 export interface FilterPaginationDataResponse {
   totalDocs: number;
-};
+}
 
 export const filterPaginationData = async ({
   create_new_arr = false,
@@ -29,7 +29,7 @@ export const filterPaginationData = async ({
     const response = await post<FilterPaginationDataResponse, any>(
       countRoute,
       false,
-      data_to_send,
+      data_to_send
     );
     if (response.totalDocs >= 0) {
       obj = { results: data, page: 1, totalDocs: response.totalDocs };

@@ -7,4 +7,4 @@ export interface User {
   fullname: string;
   role: number;
   new_notification_available: boolean;
-};
+}

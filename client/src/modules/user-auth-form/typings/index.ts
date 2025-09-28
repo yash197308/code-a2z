@@ -10,4 +10,4 @@ export interface AuthorizeUserResponse {
   username: string;
   fullname: string;
   role: number;
-};
+}

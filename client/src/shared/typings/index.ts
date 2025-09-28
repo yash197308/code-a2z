@@ -5,4 +5,4 @@ export interface Comment {
   commentedAt: string;
   children: string[];
   childrenLevel?: number;
-};
+}

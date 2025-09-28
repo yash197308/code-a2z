@@ -1,25 +1,34 @@
-import { useEffect, useState } from "react";
-import ProjectPostCard from "../../shared/components/molecules/project-card";
-import MinimalProjectPost from "./components/noBannerProject";
-import NoDataMessage from "../../shared/components/atoms/no-data-msg";
-import LoadMoreDataBtn from "../../shared/components/molecules/load-more-data";
-import AnimationWrapper from "../../shared/components/atoms/page-animation";
-import { filterPaginationData } from "../../shared/requests/filter-pagination-data";
-import InPageNavigation, { activeTabRef } from "../../shared/components/molecules/page-navigation";
-import LatestProjectsSkeleton from "./components/latestProjectsSkeleton";
-import TrendingProjectsSkeleton from "./components/trendingProjectsSkeleton";
-import { getAllLatestProjects, getTrendingProjects, searchProjectByCategory } from "./requests";
-import { useAtom } from "jotai";
-import { AllProjectsAtom, TrendingProjectAtom } from "../../shared/states/project";
-import { useNotifications } from "../../shared/hooks/use-notification";
+import { useEffect, useState } from 'react';
+import ProjectPostCard from '../../shared/components/molecules/project-card';
+import MinimalProjectPost from './components/noBannerProject';
+import NoDataMessage from '../../shared/components/atoms/no-data-msg';
+import LoadMoreDataBtn from '../../shared/components/molecules/load-more-data';
+import AnimationWrapper from '../../shared/components/atoms/page-animation';
+import { filterPaginationData } from '../../shared/requests/filter-pagination-data';
+import InPageNavigation, {
+  activeTabRef,
+} from '../../shared/components/molecules/page-navigation';
+import LatestProjectsSkeleton from './components/latestProjectsSkeleton';
+import TrendingProjectsSkeleton from './components/trendingProjectsSkeleton';
+import {
+  getAllLatestProjects,
+  getTrendingProjects,
+  searchProjectByCategory,
+} from './requests';
+import { useAtom } from 'jotai';
+import {
+  AllProjectsAtom,
+  TrendingProjectAtom,
+} from '../../shared/states/project';
+import { useNotifications } from '../../shared/hooks/use-notification';
 
 const categories = [
-  "web",
-  "data science",
-  "game development",
-  "automation",
-  "cloud computing",
-  "blockchain",
+  'web',
+  'data science',
+  'game development',
+  'automation',
+  'cloud computing',
+  'blockchain',
 ];
 
 const Home = () => {
@@ -27,7 +36,7 @@ const Home = () => {
   const [trendingProjects, setTrendingProjects] = useAtom(TrendingProjectAtom);
   const { addNotification } = useNotifications();
 
-  const [pageState, setPageState] = useState("home");
+  const [pageState, setPageState] = useState('home');
 
   const fetchLatestProjects = async ({ page = 1 }) => {
     const response = await getAllLatestProjects(page);
@@ -36,20 +45,20 @@ const Home = () => {
         state: projects,
         data: response.projects,
         page,
-        countRoute: "/api/project/all-latest-count",
+        countRoute: '/api/project/all-latest-count',
       });
       if (formattedData.results) {
         setProjects(formattedData);
       } else {
         addNotification({
-          message: "No Project Found!",
-          type: "error"
+          message: 'No Project Found!',
+          type: 'error',
         });
       }
     } else {
       addNotification({
-        message: "No Projects Found!",
-        type: "error"
+        message: 'No Projects Found!',
+        type: 'error',
       });
     }
   };
@@ -61,7 +70,7 @@ const Home = () => {
         state: projects,
         data: response.projects,
         page,
-        countRoute: "/api/project/search-count",
+        countRoute: '/api/project/search-count',
         data_to_send: { tag: pageState },
       });
       setProjects(formattedData);
@@ -80,7 +89,7 @@ const Home = () => {
     setProjects(null);
 
     if (pageState === category) {
-      setPageState("home");
+      setPageState('home');
       return;
     }
     setPageState(category);
@@ -91,7 +100,7 @@ const Home = () => {
       activeTabRef.current.click();
     }
 
-    if (pageState === "home") {
+    if (pageState === 'home') {
       fetchLatestProjects({ page: 1 });
     } else {
       fetchProjectsByCategory({ page: 1 });
@@ -107,8 +116,8 @@ const Home = () => {
         {/* Latest projects */}
         <div className="w-full">
           <InPageNavigation
-            routes={[pageState, "trending projects"]}
-            defaultHidden={["trending projects"]}
+            routes={[pageState, 'trending projects']}
+            defaultHidden={['trending projects']}
           >
             <>
               {projects?.results && projects.results.length === 0 ? (
@@ -133,7 +142,7 @@ const Home = () => {
               <LoadMoreDataBtn
                 state={projects}
                 fetchDataFun={
-                  pageState === "home"
+                  pageState === 'home'
                     ? fetchLatestProjects
                     : fetchProjectsByCategory
                 }
@@ -170,10 +179,10 @@ const Home = () => {
                     <button
                       key={i}
                       className={
-                        "tag " +
+                        'tag ' +
                         (pageState === category
-                          ? "bg-[#f0f0f0] dark:bg-[#18181b] text-[#444444] dark:text-[#a3a3a3] "
-                          : "")
+                          ? 'bg-[#f0f0f0] dark:bg-[#18181b] text-[#444444] dark:text-[#a3a3a3] '
+                          : '')
                       }
                       onClick={loadProjectsByCategory}
                     >

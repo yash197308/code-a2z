@@ -1,6 +1,6 @@
 export enum EditorMode {
-  EDITOR = "editor",
-  PUBLISH = "publish",
+  EDITOR = 'editor',
+  PUBLISH = 'publish',
 }
 
 export interface CreateProjectPayload {
