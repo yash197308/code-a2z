@@ -8,7 +8,10 @@ import router from './routes/index.js';
 import errorHandler from './middlewares/error.handler.js';
 
 // Security
-import { securityMiddleware } from './middlewares/security.js'
+import { securityMiddleware } from './middlewares/security.js';
+
+// sanitizeFields
+import { sanitizeInput } from './middlewares/sanitizeMiddleware.js';
 
 dotenv.config();
 
@@ -18,12 +21,12 @@ const server = express();
 server.use(express.json());
 server.use(cookieParser());
 server.use(cors());
-server.use(errorHandler);
-
 
 // securityMiddleware
 securityMiddleware(server);
 
+// sanitizationMiddleware (global)
+server.use(sanitizeInput());
 
 // Connect to Database
 connectDB();
@@ -36,5 +39,8 @@ server.get('/health', (req, res) =>
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() })
 );
 server.use('/api', router);
+
+// Error handler (last middleware)
+server.use(errorHandler);
 
 export default server;
