@@ -13,6 +13,9 @@ import { securityMiddleware } from './middlewares/security.js';
 // sanitizeFields
 import { sanitizeInput } from './middlewares/sanitizeMiddleware.js';
 
+// MonitorRoutes
+import monitorRoutes from './routes/api/monitor.routes.js';
+
 dotenv.config();
 
 const server = express();
@@ -35,9 +38,10 @@ connectDB();
 server.get('/', (req, res) =>
   res.status(200).json({ status: 'success', message: 'Backend is running...' })
 );
-server.get('/health', (req, res) =>
-  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() })
-);
+
+// monitoring
+server.use('/monitor', monitorRoutes);
+
 server.use('/api', router);
 
 // Error handler (last middleware)
