@@ -264,7 +264,8 @@ const Navbar = () => {
                   <Button
                     color="inherit"
                     variant="contained"
-                    href="/login"
+                    component={Link}
+                    to="/login"
                     disableElevation
                   >
                     Login
