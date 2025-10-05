@@ -15,12 +15,21 @@ const ThemeToggle = () => {
   };
 
   return (
-    <FormControl size="small">
+    <FormControl size="small" variant="standard">
       <Select
         value={theme}
         onChange={handleChange}
         displayEmpty
         inputProps={{ 'aria-label': 'Without label' }}
+        disableUnderline
+        IconComponent={() => null}
+        sx={{
+          boxShadow: 'none',
+          '.MuiOutlinedInput-notchedOutline': { border: 0 },
+          background: 'none',
+          border: 'none',
+          '& .MuiSelect-select': { paddingRight: '0 !important' },
+        }}
       >
         <MenuItem value={Theme.LIGHT}>
           <LightModeIcon fontSize="small" style={{ marginRight: 8 }} />

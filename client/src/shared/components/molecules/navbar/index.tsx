@@ -1,11 +1,67 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
+import { styled, alpha } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import Badge from '@mui/material/Badge';
+import MailIcon from '@mui/icons-material/Mail';
+import SearchIcon from '@mui/icons-material/Search';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import CreateIcon from '@mui/icons-material/Create';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import Button from '@mui/material/Button';
+
+import A2ZTypography from '../../atoms/typography';
 import UserNavigationPanel from './components/userNavigationPanel';
 import SubscribeModal from './components/subscriberModal';
 import ThemeToggle from '../theme-toggler';
 import { UserAtom } from '../../../states/user';
 import { checkNewNotifications } from './requests';
+import { useDevice } from '../../../hooks/use-device';
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
+}));
 
 const Navbar = () => {
   const [user, setUser] = useAtom(UserAtom);
@@ -13,6 +69,7 @@ const Navbar = () => {
   const [userNavPanel, setUserNavPanel] = useState(false);
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const { isDesktop } = useDevice();
 
   const navigate = useNavigate();
 
@@ -53,9 +110,7 @@ const Navbar = () => {
         event.preventDefault();
         event.stopPropagation();
 
-        // Check screen width - show mobile-style search for tablet and below
-        if (window.innerWidth >= 1024) {
-          // Desktop (lg screens)
+        if (isDesktop) {
           setTimeout(() => {
             if (searchRef.current) {
               searchRef.current.focus();
@@ -63,7 +118,6 @@ const Navbar = () => {
             }
           }, 10);
         } else {
-          // Tablet and mobile
           setSearchBoxVisibility(true);
           setTimeout(() => {
             if (searchRef.current) {
@@ -75,11 +129,10 @@ const Navbar = () => {
     };
 
     document.addEventListener('keydown', handleKeyDown, true);
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown, true);
     };
-  }, []);
+  }, [isDesktop]);
 
   const handleBlur = () => {
     setTimeout(() => {
@@ -89,109 +142,186 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="navbar z-50">
-        <Link to="/" className="flex-none w-10">
-          <img src="/logo.png" alt="" className="w-full rounded-md" />
-        </Link>
-        <div
-          className={`absolute bg-[#fafafa] dark:bg-[#09090b] w-full left-0 top-full mt-0.5 border-b border-gray-200 dark:border-[#27272a] py-4 px-[5vw] lg:border-0 lg:relative lg:inset-0 lg:p-0 ${
-            searchBoxVisibility ? 'block' : 'hidden lg:block'
-          }`}
-        >
-          <input
-            type="text"
-            placeholder={searchBoxVisibility ? 'Search' : 'Press Ctrl+K'}
-            id="search-bar"
-            ref={searchRef}
-            className="w-full lg:w-58 bg-[#ffffff] dark:bg-[#18181b] p-4 pl-6 pr-[12%] lg:pr-6 rounded-full placeholder:text-dark-grey dark:placeholder:text-gray-400 lg:pl-12 transition-all duration-300 focus:lg:w-96"
-            onKeyDown={handleSearch}
-            onFocus={() => setSearchBoxVisibility(true)}
-            onBlur={() => {
-              if (window.innerWidth < 1024) {
-                setSearchBoxVisibility(false);
-              }
-            }}
-          />
-          <i className="fi fi-rr-search absolute right-[10%] lg:pointer-events-none lg:left-5 top-1/2 -translate-y-1/2 text-xl text-dark-grey dark:text-gray-400"></i>
-        </div>
-
-        <div className="flex items-center justify-end gap-3 md:gap-6 w-full ">
-          <button
-            className="lg:hidden hover:bg-gray-200 hover:dark:bg-[#27272a] w-12 h-12 rounded-full flex items-center justify-center"
-            onClick={() => setSearchBoxVisibility(!searchBoxVisibility)}
-          >
-            <i className="fi fi-rr-search text-xl text-dark-grey dark:text-gray-400"></i>
-          </button>
-
-          <ThemeToggle />
-
-          <Link
-            to="/editor"
-            className="hidden md:flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-[#27272a] p-3 px-4 rounded-lg transition"
-          >
-            <i className="fi fi-rr-file-edit"></i>
-            <p>Write</p>
-          </Link>
-
-          {user?.access_token ? (
-            <>
-              <Link to="/dashboard/notifications">
-                <button className="w-12 h-12 rounded-full relative text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-[#27272a]">
-                  <i className="fi fi-rr-bell text-2xl block mt-1"></i>
-                  {user?.new_notification_available ? (
-                    <span className="bg-red-500 w-3 h-3 rounded-full absolute z-10 top-2 right-2"></span>
-                  ) : (
-                    ''
-                  )}
-                </button>
+      <Box sx={{ flexGrow: 1, position: 'relative' }}>
+        <AppBar color="inherit" position="static" enableColorOnDark>
+          <Toolbar>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Link to="/" className="flex-none w-10">
+                <img src="/logo.png" alt="" className="w-full rounded-md" />
               </Link>
 
-              <div
-                className="relative"
-                onClick={handleUserNavPanel}
-                onBlur={handleBlur}
-              >
-                <button className="w-12 h-12 mt-1">
-                  <img
-                    src={user?.profile_img}
-                    alt=""
-                    className="w-full h-full object-cover rounded-full"
+              <A2ZTypography sx={{ display: { xs: 'none', sm: 'block' } }}>
+                Code A2Z
+              </A2ZTypography>
+
+              <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    inputRef={searchRef}
+                    placeholder={
+                      searchBoxVisibility
+                        ? 'Search Projects...'
+                        : 'Press Ctrl+K'
+                    }
+                    inputProps={{ 'aria-label': 'search' }}
+                    onKeyDown={handleSearch}
+                    onFocus={() => setSearchBoxVisibility(true)}
+                    onBlur={() => {
+                      if (window.innerWidth < 1024) {
+                        setSearchBoxVisibility(false);
+                      }
+                    }}
                   />
-                </button>
+                </Search>
+              </Box>
 
-                {userNavPanel ? <UserNavigationPanel /> : null}
-              </div>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => setShowSubscribeModal(true)}
-                className="text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-[#27272a] py-2 px-4 rounded-full transition cursor-pointer"
+              <Box
+                sx={{
+                  display: { xs: 'flex', lg: 'none' },
+                  alignItems: 'center',
+                }}
               >
-                <i className="fi fi-rr-envelope-plus text-xl"></i>
-              </button>
+                <IconButton
+                  size="large"
+                  onClick={() => setSearchBoxVisibility(prev => !prev)}
+                  aria-label="open search"
+                >
+                  <SearchIcon />
+                </IconButton>
+              </Box>
+            </Box>
 
-              <Link
-                className="bg-black dark:bg-gray-200 text-white dark:text-gray-800 py-2 px-5 rounded-full hover:bg-gray-800 dark:hover:bg-[#ffffff] transition"
-                to="/login"
-              >
-                Login
-              </Link>
-              <Link
-                className="bg-gray-200 dark:bg-black text-gray-800 dark:text-white py-2 px-5 rounded-full hidden md:block hover:bg-gray-300 dark:hover:bg-[#27272a] transition "
-                to="/signup"
-              >
-                Sign Up
-              </Link>
-            </>
-          )}
-        </div>
-      </nav>
+            <Box sx={{ flexGrow: 1 }} />
 
-      <SubscribeModal
-        showSubscribeModal={showSubscribeModal}
-        setShowSubscribeModal={setShowSubscribeModal}
-      />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <ThemeToggle />
+
+              <Button
+                startIcon={<CreateIcon />}
+                sx={{ display: { xs: 'none', md: 'inline-flex' } }}
+                component={Link}
+                to="/editor"
+                color="inherit"
+                variant="text"
+              >
+                Write
+              </Button>
+
+              <IconButton
+                size="large"
+                aria-label="start writing about your project"
+                sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+                component={Link}
+                to="/editor"
+              >
+                <CreateIcon />
+              </IconButton>
+
+              {user?.access_token ? (
+                <>
+                  <IconButton
+                    size="large"
+                    aria-label={`show notifications`}
+                    component={Link}
+                    to="/dashboard/notifications"
+                  >
+                    <Badge
+                      badgeContent={user?.new_notification_available ? 1 : 0}
+                      color="error"
+                    >
+                      <NotificationsIcon />
+                    </Badge>
+                  </IconButton>
+
+                  <Box
+                    sx={{ position: 'relative' }}
+                    onClick={handleUserNavPanel}
+                    onBlur={handleBlur}
+                  >
+                    <IconButton
+                      size="large"
+                      edge="end"
+                      aria-label="account of current user"
+                    >
+                      <AccountCircle />
+                    </IconButton>
+                    {userNavPanel ? <UserNavigationPanel /> : null}
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <IconButton
+                    size="large"
+                    aria-label="subscribe"
+                    onClick={() => setShowSubscribeModal(true)}
+                  >
+                    <MailIcon />
+                  </IconButton>
+
+                  <Button
+                    color="inherit"
+                    variant="contained"
+                    href="/login"
+                    disableElevation
+                  >
+                    Login
+                  </Button>
+                </>
+              )}
+            </Box>
+          </Toolbar>
+        </AppBar>
+
+        <Box
+          sx={theme => ({
+            display: { xs: searchBoxVisibility ? 'block' : 'none', lg: 'none' },
+            position: 'absolute',
+            left: 0,
+            top: '100%',
+            mt: '0.5rem',
+            width: '100%',
+            bgcolor: theme.palette.background.default,
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            py: 2,
+            px: '5vw',
+            zIndex: 10,
+          })}
+        >
+          <Box sx={{ width: '100%' }}>
+            <Box sx={{ position: 'relative' }}>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                inputRef={searchRef}
+                placeholder={searchBoxVisibility ? 'Search' : 'Press Ctrl+K'}
+                inputProps={{ 'aria-label': 'search' }}
+                onKeyDown={handleSearch}
+                onFocus={() => setSearchBoxVisibility(true)}
+                onBlur={() => {
+                  if (window.innerWidth < 1024) {
+                    setTimeout(() => setSearchBoxVisibility(false), 100);
+                  }
+                }}
+                sx={{
+                  width: '100%',
+                  bgcolor: 'background.paper',
+                  p: 1,
+                  borderRadius: 9999,
+                }}
+              />
+            </Box>
+          </Box>
+        </Box>
+
+        <SubscribeModal
+          showSubscribeModal={showSubscribeModal}
+          setShowSubscribeModal={setShowSubscribeModal}
+        />
+      </Box>
 
       <Outlet />
     </>

@@ -34,6 +34,8 @@ export const emptyProjectState: Project = {
 
 export const emptyAllProjectsState: AllProjectsData = {
   results: [],
+  page: 1,
+  totalDocs: 0,
 };
 
 export const emptyTrendingProjectsState: TrendingProject[] = [];
