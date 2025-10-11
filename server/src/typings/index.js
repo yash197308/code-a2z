@@ -8,3 +8,8 @@ export const CookieToken = {
   ACCESS_TOKEN: 'access_token',
   REFRESH_TOKEN: 'refresh_token',
 };
+
+export const ProjectVisibilityModes = {
+  EDIT: 'edit',
+  READ: 'read',
+};
