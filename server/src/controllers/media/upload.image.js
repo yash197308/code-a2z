@@ -3,10 +3,10 @@ import { nanoid } from 'nanoid';
 import { sendResponse } from '../../utils/response.js';
 import cloudinary from '../../config/cloudinary.js';
 
-const getUploadUrl = async (req, res) => {
+const uploadImage = async (req, res) => {
   try {
     if (!req.file) {
-      return sendResponse(res, 400, 'error', 'No file uploaded', null);
+      return sendResponse(res, 400, 'error', 'No file uploaded');
     }
 
     const media = req.file.path;
@@ -19,18 +19,10 @@ const getUploadUrl = async (req, res) => {
       resource_type: 'image',
     });
 
-    return sendResponse(res, 200, 'success', 'File uploaded successfully', {
-      uploadURL: result.secure_url,
-    });
+    return sendResponse(res, 200, 'success', 'File uploaded successfully', { uploadURL: result.secure_url });
   } catch (error) {
-    return sendResponse(
-      res,
-      500,
-      'error',
-      error.message || 'File upload failed',
-      null
-    );
+    return sendResponse(res, 500, 'error', error.message || 'File upload failed');
   }
 };
 
-export default getUploadUrl;
+export default uploadImage;
