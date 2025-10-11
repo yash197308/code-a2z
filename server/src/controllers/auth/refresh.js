@@ -41,7 +41,7 @@ const refresh = async (req, res) => {
         maxAge: JWT_ACCESS_EXPIRES_IN_NUM,
       });
 
-      return sendResponse(res, 200, 'success', 'Access token refreshed successfully', newAccessToken);
+      return sendResponse(res, 200, 'success', 'Access token refreshed successfully');
     });
   } catch (err) {
     return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');

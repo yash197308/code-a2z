@@ -12,8 +12,8 @@ const authRoutes = express.Router();
 
 authRoutes.post('/signup', signup);
 authRoutes.post('/login', login);
-authRoutes.get('/refresh', refresh);
-authRoutes.get('/logout', logout);
+authRoutes.post('/refresh', refresh);
+authRoutes.post('/logout', logout);
 authRoutes.patch('/change-password', authenticateUser, changePassword);
 
 export default authRoutes;
