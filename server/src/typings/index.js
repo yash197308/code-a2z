@@ -13,3 +13,10 @@ export const ProjectVisibilityModes = {
   EDIT: 'edit',
   READ: 'read',
 };
+
+export const NotificationTypes = {
+  ALL: 'all',
+  LIKE: 'like',
+  COMMENT: 'comment',
+  REPLY: 'reply',
+};
