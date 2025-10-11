@@ -1,8 +1,8 @@
 import express from 'express';
 
 // Import rate limiting middlewares
-import authLimiter from '../middlewares/auth-limiter.js';
-import generalLimiter from '../middlewares/general-limiter.js';
+import authLimiter from '../middlewares/auth.limiter.js';
+import generalLimiter from '../middlewares/general.limiter.js';
 
 // Import route modules
 import authRoutes from './api/auth.routes.js';

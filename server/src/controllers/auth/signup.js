@@ -4,17 +4,21 @@ import jwt from 'jsonwebtoken';
 
 import User from '../../models/user.model.js';
 import Subscriber from '../../models/subscriber.model.js';
-
 import { emailRegex, passwordRegex } from '../../utils/regex.js';
 import { sendResponse } from '../../utils/response.js';
 import { SALT_ROUNDS } from '../../constants/index.js';
+import { CookieToken, NodeEnv } from '../../typings/index.js';
 import {
   JWT_SECRET_ACCESS_KEY,
-  JWT_EXPIRES_IN,
+  JWT_SECRET_REFRESH_KEY,
+  JWT_ACCESS_EXPIRES_IN,
+  JWT_REFRESH_EXPIRES_IN,
+  JWT_ACCESS_EXPIRES_IN_NUM,
+  JWT_REFRESH_EXPIRES_IN_NUM,
   NODE_ENV,
 } from '../../config/env.js';
-import { NodeEnv } from '../../typings/index.js';
 
+// Generate unique username
 export const generateUsername = async email => {
   let username = email.split('@')[0];
   const isUsernameNotUnique = await User.exists({
@@ -24,46 +28,41 @@ export const generateUsername = async email => {
   return username;
 };
 
+// Helper to create tokens
+const generateTokens = payload => {
+  const accessToken = jwt.sign(payload, JWT_SECRET_ACCESS_KEY, {
+    expiresIn: JWT_ACCESS_EXPIRES_IN,
+  });
+  const refreshToken = jwt.sign(payload, JWT_SECRET_REFRESH_KEY, {
+    expiresIn: JWT_REFRESH_EXPIRES_IN,
+  });
+  return { accessToken, refreshToken };
+};
+
 const signup = async (req, res) => {
   const { fullname, email, password } = req.body;
 
-  if (fullname.length < 3) {
+  if (fullname.length < 3)
+    return sendResponse(res, 400, 'error', 'Full name should be at least 3 letters long');
+  if (!emailRegex.test(email))
+    return sendResponse(res, 400, 'error', 'Invalid email');
+  if (!passwordRegex.test(password))
     return sendResponse(
       res,
       400,
       'error',
-      'Full name should be at least 3 letters long',
-      null
+      'Password should be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, and one number'
     );
-  }
-  if (!emailRegex.test(email)) {
-    return sendResponse(res, 400, 'error', 'Invalid email', null);
-  }
-  if (!passwordRegex.test(password)) {
-    return sendResponse(
-      res,
-      400,
-      'error',
-      'Password should be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, and one number',
-      null
-    );
-  }
 
   try {
     const hashed_password = await bcrypt.hash(password, SALT_ROUNDS);
     const username = await generateUsername(email);
 
-    // Check if the email exists in subscribers collection, if yes, update isSubscribed to true, else create a new subscriber
+    // Check Subscriber
     let subscribeUser = await Subscriber.findOne({ email });
     if (subscribeUser) {
       if (await User.exists({ 'personal_info.email': subscribeUser._id })) {
-        return sendResponse(
-          res,
-          400,
-          'error',
-          'Email is already registered',
-          null
-        );
+        return sendResponse(res, 400, 'error', 'Email is already registered');
       }
       if (!subscribeUser.isSubscribed) {
         subscribeUser.isSubscribed = true;
@@ -89,38 +88,26 @@ const signup = async (req, res) => {
     });
 
     const savedUser = await user.save();
+    const payload = { userId: savedUser._id, email: savedUser.personal_info.email };
+    const { accessToken, refreshToken } = generateTokens(payload);
 
-    const payload = {
-      userId: savedUser._id,
-      email: savedUser?.personal_info?.email,
-    };
-    const secret = JWT_SECRET_ACCESS_KEY;
-    const options = { expiresIn: Number(JWT_EXPIRES_IN) };
-
-    const token = jwt.sign(payload, secret, options);
-
-    res.cookie('access_token', token, {
+    // Set cookies securely
+    res.cookie(CookieToken.ACCESS_TOKEN, accessToken, {
       httpOnly: true,
       secure: NODE_ENV === NodeEnv.PRODUCTION,
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: JWT_ACCESS_EXPIRES_IN_NUM,
+    });
+    res.cookie(CookieToken.REFRESH_TOKEN, refreshToken, {
+      httpOnly: true,
+      secure: NODE_ENV === NodeEnv.PRODUCTION,
+      sameSite: 'strict',
+      maxAge: JWT_REFRESH_EXPIRES_IN_NUM,
     });
 
-    return sendResponse(
-      res,
-      201,
-      'success',
-      'User registered successfully',
-      savedUser
-    );
+    return sendResponse(res, 201, 'success', 'User registered successfully', savedUser);
   } catch (err) {
-    return sendResponse(
-      res,
-      500,
-      'error',
-      err.message || 'Internal Server Error',
-      null
-    );
+    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
   }
 };
 

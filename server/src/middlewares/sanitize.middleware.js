@@ -1,7 +1,7 @@
 import sanitizeHtml from 'sanitize-html';
 import { sendResponse } from '../utils/response.js';
 
-const sanitizeNested = (obj) => {
+export const sanitizeNested = (obj) => {
   for (const k in obj) {
     if (typeof obj[k] === "string") {
       obj[k] = sanitizeHtml(obj[k], {
@@ -14,7 +14,7 @@ const sanitizeNested = (obj) => {
   }
 };
 
-export const sanitizeInput = () => {
+const sanitizeInput = () => {
   return (req, res, next) => {
     const obj = req.body;
     try {
@@ -28,3 +28,5 @@ export const sanitizeInput = () => {
     }
   };
 };
+
+export default sanitizeInput;
