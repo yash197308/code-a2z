@@ -11,15 +11,29 @@ const getComments = async (req, res) => {
     }
 
     const comments = await Comment.find({ project_id, isReply: false })
-      .populate('commented_by', 'personal_info.username personal_info.fullname personal_info.profile_img -_id')
+      .populate(
+        'commented_by',
+        'personal_info.username personal_info.fullname personal_info.profile_img -_id'
+      )
       .skip(parseInt(skip))
       .limit(maxLimit)
       .sort({ commentedAt: -1 })
       .lean();
 
-    return sendResponse(res, 200, 'success', 'Comments fetched successfully', comments);
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Comments fetched successfully',
+      comments
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

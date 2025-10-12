@@ -7,7 +7,8 @@ const getProject = async (req, res) => {
   try {
     const { project_id } = req.params;
     const { mode } = req.query; // mode can be 'edit' or 'read' & removed 'draft = false' boolean param
-    if (!project_id) return sendResponse(res, 400, 'error', 'Project ID is required');
+    if (!project_id)
+      return sendResponse(res, 400, 'error', 'Project ID is required');
 
     const incrementVal = mode !== ProjectVisibilityModes.EDIT ? 1 : 0;
 
@@ -40,10 +41,20 @@ const getProject = async (req, res) => {
       ).catch(() => {}); // ignore errors here
     }
 
-    return sendResponse(res, 200, 'success', 'Project fetched successfully', project);
-
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Project fetched successfully',
+      project
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal server error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal server error'
+    );
   }
 };
 

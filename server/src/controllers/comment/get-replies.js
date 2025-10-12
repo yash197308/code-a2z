@@ -20,16 +20,28 @@ const getReplies = async (req, res) => {
         },
         populate: {
           path: 'commented_by',
-          select: 'personal_info.username personal_info.fullname personal_info.profile_img -_id',
+          select:
+            'personal_info.username personal_info.fullname personal_info.profile_img -_id',
         },
         select: '-project_id -updatedAt',
       })
       .select('children')
       .lean();
 
-    return sendResponse(res, 200, 'success', 'Replies fetched successfully', commentDoc?.children || []);
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Replies fetched successfully',
+      commentDoc?.children || []
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

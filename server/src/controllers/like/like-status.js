@@ -21,10 +21,20 @@ const likeStatus = async (req, res) => {
       user: user_id,
     });
 
-    return sendResponse(res, 200, 'success', 'Like status fetched successfully', { isLiked: Boolean(isLiked) });
-
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Like status fetched successfully',
+      { isLiked: Boolean(isLiked) }
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

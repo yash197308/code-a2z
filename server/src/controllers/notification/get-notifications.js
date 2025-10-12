@@ -20,7 +20,10 @@ const getNotifications = async (req, res) => {
       .skip(skipDocs)
       .limit(maxLimit)
       .populate('project', 'title project_id')
-      .populate('user', 'personal_info.username personal_info.fullname personal_info.profile_img')
+      .populate(
+        'user',
+        'personal_info.username personal_info.fullname personal_info.profile_img'
+      )
       .populate('comment', 'comment')
       .populate('replied_on_comment', 'comment')
       .populate('reply', 'comment')
@@ -34,10 +37,20 @@ const getNotifications = async (req, res) => {
       { seen: true }
     ).catch(err => console.log('Failed to mark notifications seen:', err));
 
-    return sendResponse(res, 200, 'success', 'Notifications fetched successfully', notifications);
-
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Notifications fetched successfully',
+      notifications
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

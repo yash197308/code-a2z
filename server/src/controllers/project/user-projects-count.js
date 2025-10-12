@@ -15,9 +15,20 @@ const userProjectsCount = async (req, res) => {
       title: titleFilter,
     });
 
-    return sendResponse(res, 200, 'success', 'User projects count fetched successfully', { totalDocs });
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'User projects count fetched successfully',
+      { totalDocs }
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal server error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal server error'
+    );
   }
 };
 

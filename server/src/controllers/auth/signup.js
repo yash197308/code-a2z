@@ -43,7 +43,12 @@ const signup = async (req, res) => {
   const { fullname, email, password } = req.body;
 
   if (fullname.length < 3)
-    return sendResponse(res, 400, 'error', 'Full name should be at least 3 letters long');
+    return sendResponse(
+      res,
+      400,
+      'error',
+      'Full name should be at least 3 letters long'
+    );
   if (!emailRegex.test(email))
     return sendResponse(res, 400, 'error', 'Invalid email');
   if (!passwordRegex.test(password))
@@ -88,7 +93,10 @@ const signup = async (req, res) => {
     });
 
     const savedUser = await user.save();
-    const payload = { userId: savedUser._id, email: savedUser.personal_info.email };
+    const payload = {
+      userId: savedUser._id,
+      email: savedUser.personal_info.email,
+    };
     const { accessToken, refreshToken } = generateTokens(payload);
 
     // Set cookies securely
@@ -105,9 +113,20 @@ const signup = async (req, res) => {
       maxAge: JWT_REFRESH_EXPIRES_IN_NUM,
     });
 
-    return sendResponse(res, 201, 'success', 'User registered successfully', savedUser);
+    return sendResponse(
+      res,
+      201,
+      'success',
+      'User registered successfully',
+      savedUser
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

@@ -10,7 +10,13 @@ const sortProject = async (req, res) => {
     const sortBy = req.query.sortBy || 'newest';
 
     if (!collection_id || !Types.ObjectId.isValid(collection_id)) {
-      return sendResponse(res, 400, 'error', 'Invalid or missing collection_id', null);
+      return sendResponse(
+        res,
+        400,
+        'error',
+        'Invalid or missing collection_id',
+        null
+      );
     }
 
     // Fetch the collection for this user
@@ -24,7 +30,13 @@ const sortProject = async (req, res) => {
 
     const projectIds = collection.projects || [];
     if (!projectIds.length) {
-      return sendResponse(res, 200, 'success', 'No projects found in this collection', []);
+      return sendResponse(
+        res,
+        200,
+        'success',
+        'No projects found in this collection',
+        []
+      );
     }
 
     // Define sorting criteria
@@ -44,9 +56,21 @@ const sortProject = async (req, res) => {
       )
       .lean();
 
-    return sendResponse(res, 200, 'success', 'Projects fetched successfully', projects);
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Projects fetched successfully',
+      projects
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error', null);
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error',
+      null
+    );
   }
 };
 

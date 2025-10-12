@@ -19,7 +19,12 @@ const logout = async (req, res) => {
 
     return sendResponse(res, 200, 'success', 'Logged out successfully');
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

@@ -6,10 +6,16 @@ import { sendResponse } from '../../utils/response.js';
 const addComment = async (req, res) => {
   try {
     const user_id = req.user;
-    const { _id, comment, project_author, replying_to, notification_id } = req.body;
+    const { _id, comment, project_author, replying_to, notification_id } =
+      req.body;
 
     if (!comment?.trim()?.length) {
-      return sendResponse(res, 403, 'error', 'Write something to leave a comment');
+      return sendResponse(
+        res,
+        403,
+        'error',
+        'Write something to leave a comment'
+      );
     }
 
     // Create comment object
@@ -55,7 +61,8 @@ const addComment = async (req, res) => {
         { new: true }
       );
 
-      notificationObj.notification_for = parentComment?.commented_by || project_author;
+      notificationObj.notification_for =
+        parentComment?.commented_by || project_author;
 
       if (notification_id) {
         await Notification.findOneAndUpdate(
@@ -75,9 +82,13 @@ const addComment = async (req, res) => {
       user_id,
       children: commentDoc.children,
     });
-
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

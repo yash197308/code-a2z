@@ -10,7 +10,9 @@ const getProfile = async (req, res) => {
 
   try {
     let user = await User.findOne({ 'personal_info.username': username })
-      .select('-personal_info.password -updatedAt -projects -collaborated_projects -collections')
+      .select(
+        '-personal_info.password -updatedAt -projects -collaborated_projects -collections'
+      )
       .populate({
         path: 'personal_info.email',
         select: 'email -_id',
@@ -27,9 +29,13 @@ const getProfile = async (req, res) => {
     }
 
     return sendResponse(res, 200, 'success', 'User fetched successfully', user);
-
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

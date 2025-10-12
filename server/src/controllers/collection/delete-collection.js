@@ -8,7 +8,13 @@ const deleteCollection = async (req, res) => {
     const { collection_id } = req.body;
 
     if (!collection_id || !Types.ObjectId.isValid(collection_id)) {
-      return sendResponse(res, 400, 'error', 'Invalid or missing collection_id', null);
+      return sendResponse(
+        res,
+        400,
+        'error',
+        'Invalid or missing collection_id',
+        null
+      );
     }
 
     const deletedCollection = await Collection.findOneAndDelete({
@@ -20,9 +26,20 @@ const deleteCollection = async (req, res) => {
       return sendResponse(res, 404, 'error', 'Collection not found', null);
     }
 
-    return sendResponse(res, 200, 'success', `${deletedCollection.collection_name} collection deleted successfully!`);
+    return sendResponse(
+      res,
+      200,
+      'success',
+      `${deletedCollection.collection_name} collection deleted successfully!`
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error', null);
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error',
+      null
+    );
   }
 };
 

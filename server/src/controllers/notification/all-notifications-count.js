@@ -11,10 +11,20 @@ const allNotificationsCount = async (req, res) => {
     if (filter !== NotificationTypes.ALL) findQuery.type = filter;
 
     const count = await Notification.countDocuments(findQuery);
-    return sendResponse(res, 200, 'success', 'Total notifications count fetched successfully', { totalDocs: count });
-
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Total notifications count fetched successfully',
+      { totalDocs: count }
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Failed to fetch total notifications count');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Failed to fetch total notifications count'
+    );
   }
 };
 

@@ -19,9 +19,16 @@ const uploadImage = async (req, res) => {
       resource_type: 'image',
     });
 
-    return sendResponse(res, 200, 'success', 'File uploaded successfully', { uploadURL: result.secure_url });
+    return sendResponse(res, 200, 'success', 'File uploaded successfully', {
+      uploadURL: result.secure_url,
+    });
   } catch (error) {
-    return sendResponse(res, 500, 'error', error.message || 'File upload failed');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      error.message || 'File upload failed'
+    );
   }
 };
 

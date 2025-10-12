@@ -22,9 +22,19 @@ const rejectInvitation = async (req, res) => {
     collaboration.token = ' '; // invalidate token
     await collaboration.save();
 
-    return sendResponse(res, 200, 'success', 'Collaboration invitation rejected successfully');
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Collaboration invitation rejected successfully'
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

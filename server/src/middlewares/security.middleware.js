@@ -1,7 +1,7 @@
 import hpp from 'hpp';
 import helmet from 'helmet';
 
-const securityMiddleware = (server) => {
+const securityMiddleware = server => {
   server.use(
     helmet({
       hidePoweredBy: true,

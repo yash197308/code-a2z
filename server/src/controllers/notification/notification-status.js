@@ -18,9 +18,13 @@ const notificationStatus = async (req, res) => {
       result ? 'New notification available' : 'No new notifications',
       { new_notification_available: Boolean(result) }
     );
-
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

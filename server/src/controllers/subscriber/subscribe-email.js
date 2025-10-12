@@ -15,7 +15,12 @@ const subscribeEmail = async (req, res) => {
     let subscriber = await Subscriber.findOne({ email });
     if (subscriber) {
       if (subscriber.isSubscribed) {
-        return sendResponse(res, 200, 'success', 'You are already subscribed to our newsletter');
+        return sendResponse(
+          res,
+          200,
+          'success',
+          'You are already subscribed to our newsletter'
+        );
       }
 
       // Resubscribe the existing subscriber
@@ -23,16 +28,30 @@ const subscribeEmail = async (req, res) => {
       subscriber.unsubscribedAt = null;
 
       await subscriber.save();
-      return sendResponse(res, 200, 'success', 'You have been resubscribed to our newsletter');
+      return sendResponse(
+        res,
+        200,
+        'success',
+        'You have been resubscribed to our newsletter'
+      );
     }
 
     // New subscriber
     subscriber = new Subscriber({ email });
     await subscriber.save();
-    return sendResponse(res, 201, 'success', 'Thank you for subscribing to our newsletter');
-
+    return sendResponse(
+      res,
+      201,
+      'success',
+      'Thank you for subscribing to our newsletter'
+    );
   } catch (error) {
-    return sendResponse(res, 500, 'error', error.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      error.message || 'Internal Server Error'
+    );
   }
 };
 

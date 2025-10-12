@@ -7,6 +7,11 @@ import uploadImage from '../../controllers/media/upload.image.js';
 
 const mediaRoutes = express.Router();
 
-mediaRoutes.post('/upload-image', authenticateUser, multerUpload.single('image'), uploadImage);
+mediaRoutes.post(
+  '/upload-image',
+  authenticateUser,
+  multerUpload.single('image'),
+  uploadImage
+);
 
 export default mediaRoutes;

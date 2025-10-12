@@ -20,7 +20,12 @@ const refresh = async (req, res) => {
     // Verify the refresh token
     jwt.verify(refreshToken, JWT_SECRET_REFRESH_KEY, (err, decoded) => {
       if (err) {
-        return sendResponse(res, 401, 'error', 'Invalid or expired refresh token');
+        return sendResponse(
+          res,
+          401,
+          'error',
+          'Invalid or expired refresh token'
+        );
       }
 
       const payload = {
@@ -41,10 +46,20 @@ const refresh = async (req, res) => {
         maxAge: JWT_ACCESS_EXPIRES_IN_NUM,
       });
 
-      return sendResponse(res, 200, 'success', 'Access token refreshed successfully');
+      return sendResponse(
+        res,
+        200,
+        'success',
+        'Access token refreshed successfully'
+      );
     });
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

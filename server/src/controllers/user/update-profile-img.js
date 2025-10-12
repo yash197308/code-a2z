@@ -23,11 +23,22 @@ const updateProfileImg = async (req, res) => {
       return sendResponse(res, 404, 'error', 'User not found');
     }
 
-    return sendResponse(res, 200, 'success', 'Profile image updated successfully', {
-      profile_img: updatedUser.personal_info.profile_img,
-    });
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Profile image updated successfully',
+      {
+        profile_img: updatedUser.personal_info.profile_img,
+      }
+    );
   } catch (error) {
-    return sendResponse(res, 500, 'error', error.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      error.message || 'Internal Server Error'
+    );
   }
 };
 

@@ -16,7 +16,7 @@ import {
 } from '../../config/env.js';
 
 // Helper function to generate both tokens
-const generateTokens = (payload) => {
+const generateTokens = payload => {
   const accessToken = jwt.sign(payload, JWT_SECRET_ACCESS_KEY, {
     expiresIn: JWT_ACCESS_EXPIRES_IN || '15m',
   });
@@ -48,8 +48,7 @@ const login = async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.personal_info.password);
-    if (!isMatch)
-      return sendResponse(res, 401, 'error', 'Incorrect password');
+    if (!isMatch) return sendResponse(res, 401, 'error', 'Incorrect password');
 
     const payload = { userId: user._id, email: user.personal_info.email };
     const { accessToken, refreshToken } = generateTokens(payload);
@@ -71,7 +70,12 @@ const login = async (req, res) => {
 
     return sendResponse(res, 200, 'success', 'Login successful', user);
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

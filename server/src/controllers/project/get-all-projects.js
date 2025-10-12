@@ -19,10 +19,20 @@ const getAllProjects = async (req, res) => {
       .limit(maxLimit)
       .lean();
 
-    return sendResponse(res, 200, 'success', 'Projects fetched successfully', projects);
-
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Projects fetched successfully',
+      projects
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal server error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal server error'
+    );
   }
 };
 

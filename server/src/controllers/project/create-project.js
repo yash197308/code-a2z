@@ -6,7 +6,17 @@ import { sendResponse } from '../../utils/response.js';
 
 const createProject = async (req, res) => {
   const authorId = req.user;
-  let { title, des, banner, project_url, repository, tags, content, draft, id } = req.body;
+  let {
+    title,
+    des,
+    banner,
+    project_url,
+    repository,
+    tags,
+    content,
+    draft,
+    id,
+  } = req.body;
 
   if (!title || !title.trim().length) {
     return sendResponse(res, 403, 'error', 'You must provide a title');
@@ -14,23 +24,48 @@ const createProject = async (req, res) => {
 
   if (!draft) {
     if (!des || !des.trim().length || des.length > 200) {
-      return sendResponse(res, 403, 'error', 'You must provide project description under 200 characters');
+      return sendResponse(
+        res,
+        403,
+        'error',
+        'You must provide project description under 200 characters'
+      );
     }
 
     if (!banner || !banner.trim().length) {
-      return sendResponse(res, 403, 'error', 'You must provide project banner to publish it');
+      return sendResponse(
+        res,
+        403,
+        'error',
+        'You must provide project banner to publish it'
+      );
     }
 
     if (!repository || !repository.trim().length) {
-      return sendResponse(res, 403, 'error', 'You must provide project repository to publish it');
+      return sendResponse(
+        res,
+        403,
+        'error',
+        'You must provide project repository to publish it'
+      );
     }
 
     if (!tags?.length || tags.length > 10) {
-      return sendResponse(res, 403, 'error', 'Provide tags in order to publish the project, Maximum 10');
+      return sendResponse(
+        res,
+        403,
+        'error',
+        'Provide tags in order to publish the project, Maximum 10'
+      );
     }
 
     if (!content?.[0]?.blocks?.length) {
-      return sendResponse(res, 403, 'error', 'There must be some project content to publish it');
+      return sendResponse(
+        res,
+        403,
+        'error',
+        'There must be some project content to publish it'
+      );
     }
   }
 
@@ -67,7 +102,9 @@ const createProject = async (req, res) => {
         return sendResponse(res, 404, 'error', 'Project not found to update');
       }
 
-      return sendResponse(res, 200, 'success', 'Project updated successfully', { id: project_id });
+      return sendResponse(res, 200, 'success', 'Project updated successfully', {
+        id: project_id,
+      });
     } else {
       // Create new project
       const project = new Project({
@@ -101,10 +138,17 @@ const createProject = async (req, res) => {
         );
       }
 
-      return sendResponse(res, 200, 'success', 'Project created successfully', { id: savedProject.project_id });
+      return sendResponse(res, 200, 'success', 'Project created successfully', {
+        id: savedProject.project_id,
+      });
     }
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal server error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal server error'
+    );
   }
 };
 

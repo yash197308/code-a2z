@@ -15,9 +15,20 @@ const getListOfCollaborators = async (req, res) => {
       return sendResponse(res, 404, 'error', 'No collaborators found!');
     }
 
-    return sendResponse(res, 200, 'success', 'Collaborators fetched successfully', collaborators);
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Collaborators fetched successfully',
+      collaborators
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

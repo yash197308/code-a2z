@@ -9,7 +9,12 @@ const saveProjectInCollection = async (req, res) => {
     const { collection_id, project_id } = req.body;
 
     if (!collection_id || !Types.ObjectId.isValid(collection_id)) {
-      return sendResponse(res, 400, 'error', 'Invalid or missing collection_id');
+      return sendResponse(
+        res,
+        400,
+        'error',
+        'Invalid or missing collection_id'
+      );
     }
 
     if (!project_id || !Types.ObjectId.isValid(project_id)) {
@@ -23,14 +28,22 @@ const saveProjectInCollection = async (req, res) => {
     }
 
     // Check collection existence for user
-    const collection = await Collection.findOne({ user_id, _id: collection_id });
+    const collection = await Collection.findOne({
+      user_id,
+      _id: collection_id,
+    });
     if (!collection) {
       return sendResponse(res, 404, 'error', 'Collection not found');
     }
 
     // Prevent duplicate project
     if (collection.projects.some(id => id.toString() === project_id)) {
-      return sendResponse(res, 200, 'success', 'Project already exists in this collection');
+      return sendResponse(
+        res,
+        200,
+        'success',
+        'Project already exists in this collection'
+      );
     }
 
     await Collection.updateOne(
@@ -40,7 +53,12 @@ const saveProjectInCollection = async (req, res) => {
 
     return sendResponse(res, 201, 'success', 'Project saved successfully!');
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal Server Error'
+    );
   }
 };
 

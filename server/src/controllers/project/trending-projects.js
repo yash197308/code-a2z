@@ -17,10 +17,20 @@ const trendingProjects = async (req, res) => {
       .limit(5)
       .lean();
 
-    return sendResponse(res, 200, 'success', 'Trending projects fetched successfully', projects);
-
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Trending projects fetched successfully',
+      projects
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal server error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal server error'
+    );
   }
 };
 

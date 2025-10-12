@@ -20,9 +20,20 @@ const userProjects = async (req, res) => {
       .select('title banner publishedAt project_id activity des draft -_id')
       .lean();
 
-    return sendResponse(res, 200, 'success', 'User projects fetched successfully', projects);
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'User projects fetched successfully',
+      projects
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal server error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal server error'
+    );
   }
 };
 

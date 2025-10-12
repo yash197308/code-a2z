@@ -16,10 +16,20 @@ const searchProjectsCount = async (req, res) => {
     }
 
     const count = await Project.countDocuments(findQuery);
-    return sendResponse(res, 200, 'success', 'Search projects count fetched successfully', { totalDocs: count });
-
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'Search projects count fetched successfully',
+      { totalDocs: count }
+    );
   } catch (err) {
-    return sendResponse(res, 500, 'error', err.message || 'Internal server error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      err.message || 'Internal server error'
+    );
   }
 };
 

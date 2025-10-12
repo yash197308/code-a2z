@@ -14,10 +14,20 @@ const unsubscribeEmail = async (req, res) => {
   try {
     const subscriber = await Subscriber.findOne({ email });
     if (!subscriber) {
-      return sendResponse(res, 404, 'error', 'Email not found in our subscription list');
+      return sendResponse(
+        res,
+        404,
+        'error',
+        'Email not found in our subscription list'
+      );
     }
     if (!subscriber.isSubscribed) {
-      return sendResponse(res, 200, 'success', 'You are already unsubscribed from our newsletter');
+      return sendResponse(
+        res,
+        200,
+        'success',
+        'You are already unsubscribed from our newsletter'
+      );
     }
 
     // Unsubscribe the subscriber
@@ -25,10 +35,19 @@ const unsubscribeEmail = async (req, res) => {
     subscriber.unsubscribedAt = new Date();
 
     await subscriber.save();
-    return sendResponse(res, 200, 'success', 'You have been unsubscribed from our newsletter');
-
+    return sendResponse(
+      res,
+      200,
+      'success',
+      'You have been unsubscribed from our newsletter'
+    );
   } catch (error) {
-    return sendResponse(res, 500, 'error', error.message || 'Internal Server Error');
+    return sendResponse(
+      res,
+      500,
+      'error',
+      error.message || 'Internal Server Error'
+    );
   }
 };
 
