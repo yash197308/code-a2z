@@ -14,7 +14,7 @@ import likeRoutes from './api/like.routes.js';
 import commentRoutes from './api/comment.routes.js';
 import notificationRoutes from './api/notification.routes.js';
 import collectionRoutes from './api/collections.routes.js';
-import collaboratorRoutes from './api/collaborator.routes.js';
+import collabRoutes from './api/collab.routes.js';
 
 const router = express.Router();
 
@@ -27,6 +27,6 @@ router.use('/like', generalLimiter, likeRoutes);
 router.use('/comment', generalLimiter, commentRoutes);
 router.use('/notification', generalLimiter, notificationRoutes);
 router.use('/collection', generalLimiter, collectionRoutes);
-router.use('/collaborator', generalLimiter, collaboratorRoutes);
+router.use('/collab', generalLimiter, collabRoutes);
 
 export default router;

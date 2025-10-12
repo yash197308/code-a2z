@@ -20,3 +20,9 @@ export const NotificationTypes = {
   COMMENT: 'comment',
   REPLY: 'reply',
 };
+
+export const COLLABORATION_STATUS = {
+  PENDING: 'pending',
+  ACCEPTED: 'accepted',
+  REJECTED: 'rejected',
+};
