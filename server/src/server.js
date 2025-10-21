@@ -15,6 +15,9 @@ import sanitizeInput from './middlewares/sanitize.middleware.js';
 import monitorRoutes from './routes/api/monitor.routes.js';
 import router from './routes/index.js';
 
+// Logger
+import { loggingMiddleware } from './middlewares/logging.middleware.js';
+
 dotenv.config();
 
 const server = express();
@@ -30,12 +33,15 @@ securityMiddleware(server);
 // sanitizationMiddleware (global)
 server.use(sanitizeInput());
 
+// Logging middleware
+loggingMiddleware(server);
+
 // Connect to Database
 connectDB();
 
 // Routes
 server.get('/', (req, res) =>
-  res.status(200).json({ status: 'success', message: 'Backend is running...' })
+    res.status(200).json({ status: 'success', message: 'Backend is running...' })
 );
 
 // Monitoring Route
